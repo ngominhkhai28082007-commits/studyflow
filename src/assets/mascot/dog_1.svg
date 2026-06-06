@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+
+  <defs>
+    <radialGradient id="head" cx="50%" cy="42%" r="62%">
+      <stop offset="60%" stop-color="#F7EAD9"/>
+      <stop offset="100%" stop-color="#EAD7BE"/>
+    </radialGradient>
+    <radialGradient id="body" cx="50%" cy="40%" r="65%">
+      <stop offset="60%" stop-color="#F7EAD9"/>
+      <stop offset="100%" stop-color="#EAD7BE"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%"  stop-color="#FFE0A8"/>
+      <stop offset="55%" stop-color="#FFB27D"/>
+      <stop offset="100%" stop-color="#FF9E7D"/>
+    </linearGradient>
+    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A9C7E8"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+  <g></g>
+  
+  <!-- body -->
+  <ellipse cx="256" cy="352" rx="120" ry="104" fill="url(#body)" stroke="#5B4636" stroke-width="5"/>
+  <!-- back legs/paws -->
+  <ellipse cx="185" cy="430" rx="40" ry="26" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
+  <ellipse cx="327" cy="430" rx="40" ry="26" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
+  <!-- ears (behind head) -->
+  <ellipse cx="176" cy="196" rx="40" ry="66" fill="#C9A480" stroke="#5B4636" stroke-width="5" transform="rotate(-16 176 196)"/>
+  <ellipse cx="336" cy="196" rx="40" ry="66" fill="#C9A480" stroke="#5B4636" stroke-width="5" transform="rotate(16 336 196)"/>
+  <!-- head -->
+  <circle cx="256" cy="204" r="96" fill="url(#head)" stroke="#5B4636" stroke-width="5"/>
+  <!-- brown eye patch (character mark) -->
+  <ellipse cx="300" cy="196" rx="40" ry="42" fill="#C9A480" opacity="0.55"/>
+  <!-- muzzle -->
+  <ellipse cx="256" cy="240" rx="52" ry="40" fill="#FFF8EE"/>
+
+  <ellipse cx="196" cy="232" rx="17" ry="11" fill="#F4B8AE"/><ellipse cx="316" cy="232" rx="17" ry="11" fill="#F4B8AE"/><path d="M256,224 q-13,0 -13,9 q0,9 13,13 q13,-4 13,-13 q0,-9 -13,-9 Z" fill="#5B4636"/><path d="M208,202 q12,10 24,0" stroke="#5B4636" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M280,202 q12,10 24,0" stroke="#5B4636" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M246,256 q10,8 20,0" fill="none" stroke="#5B4636" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- paws holding the book -->
+  <ellipse cx="196" cy="372" rx="26" ry="18" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
+  <ellipse cx="316" cy="372" rx="26" ry="18" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
+  <!-- open book -->
+  <path d="M150,392 L256,372 L256,432 L156,452 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M362,392 L256,372 L256,432 L356,452 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M150,392 L256,372 L256,432 L156,452 Z M362,392 L256,372 L256,432 L356,452 Z" fill="url(#cover)" opacity="0.5"/>
+  <line x1="172" y1="384" x2="248" y2="378" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="378" x2="340" y2="384" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="393" x2="248" y2="387" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="387" x2="340" y2="393" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="402" x2="248" y2="396" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="396" x2="340" y2="402" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="411" x2="248" y2="405" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="405" x2="340" y2="411" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/>
+  <line x1="256" y1="372" x2="256" y2="432" stroke="#5B4636" stroke-width="4"/>
+
+  <g></g>
+</svg>

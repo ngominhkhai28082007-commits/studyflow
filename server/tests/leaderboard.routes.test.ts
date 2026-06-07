@@ -59,4 +59,28 @@ describe("leaderboard API", () => {
     const mine = res.body.find((r: any) => r.isMe);
     expect(mine.name).toBe("Người A");
   });
+
+  it("người chưa học tuần này KHÔNG xuất hiện trên bảng công khai", async () => {
+    const a = await makeUser("Người A", "a@example.com");
+    await seedHours(a.userId, 2);
+    await makeUser("Người Lười", "lazy@example.com"); // 0 giờ, không seed
+    const res = await request(app).get("/api/leaderboard");
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].name).toBe("Người A");
+  });
+
+  it("mình chưa học tuần này -> được thêm ở cuối với hạng = (số người có giờ) + 1, hours 0", async () => {
+    const a = await makeUser("Người A", "a@example.com");
+    const b = await makeUser("Người B", "b@example.com");
+    await seedHours(a.userId, 5);
+    await seedHours(b.userId, 2);
+    const me = await makeUser("Tôi Lười", "me@example.com"); // 0 giờ
+    const res = await request(app)
+      .get("/api/leaderboard")
+      .set("Authorization", `Bearer ${me.token}`);
+    const mine = res.body.find((r: any) => r.isMe);
+    expect(mine.name).toBe("Tôi Lười");
+    expect(mine.hours).toBe(0);
+    expect(mine.rank).toBe(3); // 2 người có giờ -> mình hạng 3
+  });
 });

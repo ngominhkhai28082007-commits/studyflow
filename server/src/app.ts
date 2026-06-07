@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { authRouter } from "./routes/auth";
 import { tasksRouter } from "./routes/tasks";
@@ -21,6 +21,13 @@ export function createApp() {
   app.use("/api/sessions", sessionsRouter);
   app.use("/api/stats", statsRouter);
   app.use("/api/leaderboard", leaderboardRouter);
+
+  // Error-handling middleware (4 tham số): mọi lỗi do asyncHandler chuyển tới
+  // sẽ vào đây, trả 500 thay vì để request treo.
+  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(err);
+    res.status(500).json({ error: "Lỗi máy chủ, vui lòng thử lại sau." });
+  });
 
   return app;
 }

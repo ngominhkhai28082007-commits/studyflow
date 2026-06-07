@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/requireAuth";
+import { asyncHandler } from "../lib/asyncHandler";
 import { createTaskSchema } from "../validation/study";
 import { dateKey } from "../lib/datetime";
 
@@ -9,7 +10,7 @@ tasksRouter.use(requireAuth);
 
 const DAY_MS = 86_400_000;
 
-tasksRouter.get("/", async (req, res) => {
+tasksRouter.get("/", asyncHandler(async (req, res) => {
   const tasks = await prisma.task.findMany({
     where: { userId: req.userId },
     orderBy: { createdAt: "asc" },
@@ -33,9 +34,9 @@ tasksRouter.get("/", async (req, res) => {
   }
 
   res.json(tasks.map((t) => ({ id: t.id, name: t.name, todaySeconds: todayByTask.get(t.id) ?? 0 })));
-});
+}));
 
-tasksRouter.post("/", async (req, res) => {
+tasksRouter.post("/", asyncHandler(async (req, res) => {
   const parsed = createTaskSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.issues[0].message });
@@ -44,13 +45,13 @@ tasksRouter.post("/", async (req, res) => {
     data: { name: parsed.data.name, userId: req.userId! },
   });
   return res.status(201).json({ id: task.id, name: task.name, todaySeconds: 0 });
-});
+}));
 
-tasksRouter.delete("/:id", async (req, res) => {
+tasksRouter.delete("/:id", asyncHandler(async (req, res) => {
   const found = await prisma.task.findFirst({ where: { id: req.params.id, userId: req.userId } });
   if (!found) {
     return res.status(404).json({ error: "Không tìm thấy công việc" });
   }
   await prisma.task.delete({ where: { id: found.id } });
   return res.status(204).end();
-});
+}));

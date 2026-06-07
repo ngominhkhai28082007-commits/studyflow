@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/requireAuth";
+import { asyncHandler } from "../lib/asyncHandler";
 import { createSessionSchema } from "../validation/study";
 
 export const sessionsRouter = Router();
 sessionsRouter.use(requireAuth);
 
-sessionsRouter.post("/", async (req, res) => {
+sessionsRouter.post("/", asyncHandler(async (req, res) => {
   const parsed = createSessionSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.issues[0].message });
@@ -28,4 +29,4 @@ sessionsRouter.post("/", async (req, res) => {
     seconds: session.seconds,
     startedAt: session.startedAt,
   });
-});
+}));

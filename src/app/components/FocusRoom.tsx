@@ -17,8 +17,9 @@ interface FocusRoomProps {
 export function FocusRoom({ taskName, onExit }: FocusRoomProps) {
   const [sessionTime, setSessionTime] = useState(0);
 
-  // Mock users in the room with different focus levels
-  // totalSeconds = total accumulated focus time from all past sessions
+  // CHƯA THẬT (mock): phòng học chung realtime nằm ngoài phạm vi GĐ3 (xem spec §13).
+  // Danh sách người trong phòng và getUserLevel() bên dưới chỉ để minh hoạ giao diện;
+  // KHÔNG dùng làm chuẩn level. Level thật do backend levelFromHours() tính theo giờ tuần.
   const [users, setUsers] = useState<FocusUser[]>([
     { id: "1", name: "Nguyễn Minh Khoa", abbr: "NK", totalSeconds: 12.5 * 3600 }, // 12.5 hours = 45000 seconds
     { id: "2", name: "Trần Thị Lan", abbr: "TL", totalSeconds: 8.2 * 3600 }, // 29520 seconds

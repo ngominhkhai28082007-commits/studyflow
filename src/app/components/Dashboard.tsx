@@ -22,6 +22,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [newTaskName, setNewTaskName] = useState("");
   const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
   const [selectedMascot, setSelectedMascot] = useState("dog");
+  const [error, setError] = useState<string | null>(null);
 
   const refreshTasks = async () => {
     const data = await listTasks();
@@ -29,7 +30,9 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   useEffect(() => {
-    refreshTasks().finally(() => setLoading(false));
+    refreshTasks()
+      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được danh sách công việc"))
+      .finally(() => setLoading(false));
   }, []);
 
   const totalTime = tasks.reduce((sum, t) => sum + t.todaySeconds, 0);
@@ -51,8 +54,9 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
       try {
         await recordSession(currentTask, seconds);
         await refreshTasks();
-      } catch {
-        // lỗi mạng: bỏ qua, lần mở sau sẽ lấy lại số từ server
+      } catch (e) {
+        // báo lỗi để người dùng biết phiên chưa được lưu (server vẫn là nguồn sự thật)
+        setError(e instanceof Error ? e.message : "Không lưu được phiên học vừa rồi");
       }
     }
     setShowRoom(false);
@@ -62,14 +66,26 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
   const addTask = async () => {
     const name = newTaskName.trim();
     if (!name) return;
-    setNewTaskName("");
-    const created = await apiCreateTask(name);
-    setTasks((prev) => [...prev, created]);
+    setError(null);
+    try {
+      const created = await apiCreateTask(name);
+      setTasks((prev) => [...prev, created]);
+      setNewTaskName(""); // chỉ xoá ô nhập khi đã thêm thành công
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Không thêm được công việc");
+    }
   };
 
   const removeTask = async (id: string) => {
-    await apiDeleteTask(id);
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+    const prev = tasks;
+    setError(null);
+    setTasks((p) => p.filter((t) => t.id !== id)); // xoá lạc quan trên UI
+    try {
+      await apiDeleteTask(id);
+    } catch (e) {
+      setTasks(prev); // lỗi -> khôi phục lại danh sách
+      setError(e instanceof Error ? e.message : "Không xóa được công việc");
+    }
   };
 
   if (activePanel) {
@@ -117,6 +133,15 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-12">
+        {error && (
+          <div className="mb-6 flex items-center justify-between gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-4 py-3">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300 shrink-0">
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
         {/* Total Time Display */}
         <div className="text-center mb-12">
           <div
@@ -192,7 +217,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
             placeholder="Thêm công việc mới..."
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && addTask()}
+            onKeyDown={(e) => e.key === "Enter" && addTask()}
             className="flex-1 px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:border-primary text-sm transition-all"
           />
           <button

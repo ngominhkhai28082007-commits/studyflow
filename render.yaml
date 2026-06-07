@@ -1,0 +1,25 @@
+# Cấu hình deploy backend lên Render (Infrastructure as Code / "Blueprint").
+# Có thể dùng file này khi tạo dịch vụ qua "New > Blueprint", hoặc tự điền tay
+# các giá trị tương ứng trong Dashboard khi tạo "New > Web Service".
+#
+# Render tự cấp biến PORT; backend đã đọc process.env.PORT nên không cần khai báo.
+services:
+  - type: web
+    name: studyflow-api
+    runtime: node
+    rootDir: server # mã backend nằm trong thư mục server/
+    plan: free
+    # Build chạy trên Linux của Render: cài deps, sinh Prisma Client cho Linux, biên dịch TS.
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start # = node dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      # sync:false = KHÔNG lưu trong file này; bạn tự nhập giá trị bí mật trong Dashboard.
+      - key: DATABASE_URL # chuỗi Neon prod CÓ -pooler (pooled), dùng lúc chạy
+        sync: false
+      - key: DIRECT_URL # chuỗi Neon prod KHÔNG -pooler (direct), dùng cho prisma
+        sync: false
+      - key: JWT_SECRET # chuỗi ngẫu nhiên mạnh, KHÁC secret dev
+        sync: false
+      - key: CLIENT_ORIGIN # URL frontend trên Vercel, ví dụ https://studyflow.vercel.app
+        sync: false

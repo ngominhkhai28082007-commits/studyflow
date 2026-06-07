@@ -9,9 +9,35 @@ datasource db {
 }
 
 model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  tasks         Task[]
+  studySessions StudySession[]
+}
+
+model Task {
   id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   name      String
-  email     String   @unique
-  password  String
   createdAt DateTime @default(now())
+  sessions  StudySession[]
+
+  @@index([userId])
+}
+
+model StudySession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  seconds   Int
+  startedAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId, startedAt])
 }

@@ -1,13 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Timer, Users, Flame, Trophy, ChevronRight, Eye, EyeOff, BookOpen, Zap } from "lucide-react";
 import { Dashboard } from "./components/Dashboard";
+import { register as apiRegister, login as apiLogin, fetchMe, logout as apiLogout, getToken, type PublicUser } from "./lib/api";
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<PublicUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"login" | "register">("register");
   const [showPassword, setShowPassword] = useState(false);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "" });
+
+  useEffect(() => {
+    if (!getToken()) {
+      setAuthLoading(false);
+      return;
+    }
+    fetchMe()
+      .then((u) => setUser(u))
+      .catch(() => apiLogout())
+      .finally(() => setAuthLoading(false));
+  }, []);
 
   const scrollToAuth = (tab: "login" | "register") => {
     setActiveTab(tab);
@@ -64,25 +78,38 @@ export default function App() {
 
   const rankEmoji = ["🥇", "🥈", "🥉"];
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - just check if fields are filled
-    if (loginForm.email && loginForm.password) {
-      setIsLoggedIn(true);
+    setAuthError(null);
+    try {
+      const u = await apiLogin(loginForm);
+      setUser(u);
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Đăng nhập thất bại");
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock register - just check if fields are filled
-    if (registerForm.name && registerForm.email && registerForm.password) {
-      setIsLoggedIn(true);
+    setAuthError(null);
+    try {
+      const u = await apiRegister(registerForm);
+      setUser(u);
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Đăng ký thất bại");
     }
   };
 
-  // Show Dashboard if logged in
-  if (isLoggedIn) {
-    return <Dashboard />;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <span className="text-muted-foreground text-sm">Đang tải…</span>
+      </div>
+    );
+  }
+
+  if (user) {
+    return <Dashboard onLogout={() => { apiLogout(); setUser(null); }} />;
   }
 
   return (
@@ -369,6 +396,11 @@ export default function App() {
           </div>
 
           <div className="bg-card border border-border rounded-xl p-8 shadow-2xl">
+            {authError && (
+              <p className="mb-5 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-3 py-2">
+                {authError}
+              </p>
+            )}
             {activeTab === "register" ? (
               <form onSubmit={handleRegister} className="space-y-5">
                 <div>

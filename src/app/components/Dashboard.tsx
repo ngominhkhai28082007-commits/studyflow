@@ -14,7 +14,7 @@ interface Task {
   isRunning: boolean;
 }
 
-export function Dashboard() {
+export function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tasks, setTasks] = useState<Task[]>([
     { id: "1", name: "Học", time: 0, isRunning: false },
     { id: "2", name: "Tập thể dục", time: 0, isRunning: false },
@@ -123,6 +123,12 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <button
+        onClick={onLogout}
+        className="fixed top-4 right-4 z-50 text-xs px-3 py-2 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
+      >
+        Đăng xuất
+      </button>
       {/* Header */}
       <nav className="border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">

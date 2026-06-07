@@ -3,6 +3,7 @@ import cors from "cors";
 import { authRouter } from "./routes/auth";
 import { tasksRouter } from "./routes/tasks";
 import { sessionsRouter } from "./routes/sessions";
+import { statsRouter } from "./routes/stats";
 
 export function createApp() {
   const app = express();
@@ -17,6 +18,7 @@ export function createApp() {
   app.use("/api/auth", authRouter);
   app.use("/api/tasks", tasksRouter);
   app.use("/api/sessions", sessionsRouter);
+  app.use("/api/stats", statsRouter);
 
   return app;
 }

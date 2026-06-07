@@ -56,3 +56,53 @@ export async function fetchMe(): Promise<PublicUser> {
 export function logout(): void {
   clearToken();
 }
+
+export interface ApiTask {
+  id: string;
+  name: string;
+  todaySeconds: number;
+}
+
+export interface ApiStats {
+  totalWeekHours: number;
+  totalMonthHours: number;
+  streakDays: number;
+  sessions: number;
+  bestDayHours: number;
+  avgPerDayHours: number;
+  weeklyStudy: { day: string; hours: number }[];
+}
+
+export interface ApiRankUser {
+  rank: number;
+  name: string;
+  abbr: string;
+  hours: number;
+  streak: number;
+  level: number;
+  isMe: boolean;
+}
+
+export async function listTasks(): Promise<ApiTask[]> {
+  return apiFetch("/api/tasks");
+}
+
+export async function createTask(name: string): Promise<ApiTask> {
+  return apiFetch("/api/tasks", { method: "POST", body: JSON.stringify({ name }) });
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await apiFetch(`/api/tasks/${id}`, { method: "DELETE" });
+}
+
+export async function recordSession(taskId: string, seconds: number): Promise<void> {
+  await apiFetch("/api/sessions", { method: "POST", body: JSON.stringify({ taskId, seconds }) });
+}
+
+export async function getStats(): Promise<ApiStats> {
+  return apiFetch("/api/stats");
+}
+
+export async function getLeaderboard(): Promise<ApiRankUser[]> {
+  return apiFetch("/api/leaderboard");
+}

@@ -11,7 +11,7 @@ interface FocusUser {
 
 interface FocusRoomProps {
   taskName: string;
-  onExit: () => void;
+  onExit: (seconds: number) => void;
 }
 
 export function FocusRoom({ taskName, onExit }: FocusRoomProps) {
@@ -69,7 +69,7 @@ export function FocusRoom({ taskName, onExit }: FocusRoomProps) {
       <nav className="border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <button
-            onClick={onExit}
+            onClick={() => onExit(sessionTime)}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft size={18} />

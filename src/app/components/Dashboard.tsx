@@ -1,47 +1,38 @@
 import { useState, useEffect } from "react";
-import { Play, Plus, X, Users, Flame } from "lucide-react";
+import { Play, Plus, X, Flame } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
 import { AppMenu, PanelKey } from "./AppMenu";
 import { StatsPage } from "./StatsPage";
 import { RankingPage } from "./RankingPage";
 import { MascotPage } from "./MascotPage";
 import { ShopPage } from "./ShopPage";
-
-interface Task {
-  id: string;
-  name: string;
-  time: number; // seconds
-  isRunning: boolean;
-}
+import {
+  listTasks,
+  createTask as apiCreateTask,
+  deleteTask as apiDeleteTask,
+  recordSession,
+  type ApiTask,
+} from "../lib/api";
 
 export function Dashboard({ onLogout }: { onLogout: () => void }) {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: "1", name: "Học", time: 0, isRunning: false },
-    { id: "2", name: "Tập thể dục", time: 0, isRunning: false },
-  ]);
-  const [totalTime, setTotalTime] = useState(0);
+  const [tasks, setTasks] = useState<ApiTask[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showRoom, setShowRoom] = useState(false);
   const [currentTask, setCurrentTask] = useState<string | null>(null);
   const [newTaskName, setNewTaskName] = useState("");
   const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
   const [selectedMascot, setSelectedMascot] = useState("dog");
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.isRunning ? { ...task, time: task.time + 1 } : task
-        )
-      );
-    }, 1000);
+  const refreshTasks = async () => {
+    const data = await listTasks();
+    setTasks(data);
+  };
 
-    return () => clearInterval(interval);
+  useEffect(() => {
+    refreshTasks().finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    const total = tasks.reduce((sum, task) => sum + task.time, 0);
-    setTotalTime(total);
-  }, [tasks]);
+  const totalTime = tasks.reduce((sum, t) => sum + t.todaySeconds, 0);
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -50,47 +41,35 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const toggleTask = (id: string) => {
-    const task = tasks.find((t) => t.id === id);
-    if (!task) return;
+  const startTask = (id: string) => {
+    setCurrentTask(id);
+    setShowRoom(true);
+  };
 
-    if (!task.isRunning) {
-      // Start task and show room
-      setTasks((prev) =>
-        prev.map((t) => ({
-          ...t,
-          isRunning: t.id === id,
-        }))
-      );
-      setCurrentTask(id);
-      setShowRoom(true);
-    } else {
-      // Stop task
-      setTasks((prev) =>
-        prev.map((t) => ({
-          ...t,
-          isRunning: false,
-        }))
-      );
-      setCurrentTask(null);
-      setShowRoom(false);
+  const exitRoom = async (seconds: number) => {
+    if (currentTask && seconds > 0) {
+      try {
+        await recordSession(currentTask, seconds);
+        await refreshTasks();
+      } catch {
+        // lỗi mạng: bỏ qua, lần mở sau sẽ lấy lại số từ server
+      }
     }
+    setShowRoom(false);
+    setCurrentTask(null);
   };
 
-  const addTask = () => {
-    if (!newTaskName.trim()) return;
-    const newTask: Task = {
-      id: Date.now().toString(),
-      name: newTaskName,
-      time: 0,
-      isRunning: false,
-    };
-    setTasks([...tasks, newTask]);
+  const addTask = async () => {
+    const name = newTaskName.trim();
+    if (!name) return;
     setNewTaskName("");
+    const created = await apiCreateTask(name);
+    setTasks((prev) => [...prev, created]);
   };
 
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter((t) => t.id !== id));
+  const removeTask = async (id: string) => {
+    await apiDeleteTask(id);
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
   if (activePanel) {
@@ -104,21 +83,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   if (showRoom && currentTask) {
     const task = tasks.find((t) => t.id === currentTask);
-    return (
-      <FocusRoom
-        taskName={task?.name || ""}
-        onExit={() => {
-          setShowRoom(false);
-          setTasks((prev) =>
-            prev.map((t) => ({
-              ...t,
-              isRunning: false,
-            }))
-          );
-          setCurrentTask(null);
-        }}
-      />
-    );
+    return <FocusRoom taskName={task?.name || ""} onExit={exitRoom} />;
   }
 
   return (
@@ -129,6 +94,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
       >
         Đăng xuất
       </button>
+
       {/* Header */}
       <nav className="border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -145,16 +111,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-              <Flame size={12} />
-              <span>7 ngày streak</span>
-            </div>
             <AppMenu onSelect={setActivePanel} />
-            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-              NK
-            </div>
           </div>
         </div>
       </nav>
@@ -175,9 +132,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
           >
             {formatTime(totalTime)}
           </div>
-          <div className="text-muted-foreground text-sm mt-2">
-            Hôm nay
-          </div>
+          <div className="text-muted-foreground text-sm mt-2">Hôm nay</div>
         </div>
 
         {/* Task List */}
@@ -189,28 +144,21 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
             // danh_sách_công_việc
           </div>
 
+          {loading && <div className="text-muted-foreground text-sm">Đang tải…</div>}
+          {!loading && tasks.length === 0 && (
+            <div className="text-muted-foreground text-sm">Chưa có công việc nào. Thêm một việc bên dưới để bắt đầu.</div>
+          )}
+
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`group flex items-center gap-4 p-5 rounded-xl bg-card border transition-all duration-200 ${
-                task.isRunning
-                  ? "border-primary shadow-lg shadow-primary/20"
-                  : "border-border hover:border-primary/40"
-              }`}
+              className="group flex items-center gap-4 p-5 rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-200"
             >
               <button
-                onClick={() => toggleTask(task.id)}
-                className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all ${
-                  task.isRunning
-                    ? "bg-primary text-white shadow-lg shadow-primary/30"
-                    : "bg-primary/10 text-primary hover:bg-primary/20"
-                }`}
+                onClick={() => startTask(task.id)}
+                className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all"
               >
-                {task.isRunning ? (
-                  <div className="w-3 h-3 bg-white rounded-sm" />
-                ) : (
-                  <Play size={16} className="ml-0.5" fill="currentColor" />
-                )}
+                <Play size={16} className="ml-0.5" fill="currentColor" />
               </button>
 
               <div className="flex-1 min-w-0">
@@ -224,26 +172,16 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
                   className="text-sm tabular-nums text-muted-foreground"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
-                  {formatTime(task.time)}
+                  {formatTime(task.todaySeconds)}
                 </div>
               </div>
 
-              {task.isRunning && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs animate-pulse"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  <Users size={12} />
-                  <span>Đang focus</span>
-                </div>
-              )}
-
-              {!task.isRunning && (
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-500/10 rounded-lg text-red-400"
-                >
-                  <X size={16} />
-                </button>
-              )}
+              <button
+                onClick={() => removeTask(task.id)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-500/10 rounded-lg text-red-400"
+              >
+                <X size={16} />
+              </button>
             </div>
           ))}
         </div>

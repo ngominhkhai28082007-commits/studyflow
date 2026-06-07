@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Timer, Users, Flame, Trophy, ChevronRight, Eye, EyeOff, BookOpen, Zap } from "lucide-react";
 import { Dashboard } from "./components/Dashboard";
-import { register as apiRegister, login as apiLogin, fetchMe, logout as apiLogout, getToken, type PublicUser } from "./lib/api";
+import { register as apiRegister, login as apiLogin, fetchMe, logout as apiLogout, getToken, type PublicUser, getLeaderboard, type ApiRankUser } from "./lib/api";
 
 export default function App() {
   const [user, setUser] = useState<PublicUser | null>(null);
@@ -61,13 +61,12 @@ export default function App() {
     },
   ];
 
-  const leaderboard = [
-    { rank: 1, name: "Nguyễn Minh Khoa", hours: 128, streak: 47, abbr: "NK" },
-    { rank: 2, name: "Trần Thị Lan Anh", hours: 115, streak: 35, abbr: "LA" },
-    { rank: 3, name: "Lê Hoàng Đức", hours: 98, streak: 42, abbr: "HĐ" },
-    { rank: 4, name: "Phạm Thu Hương", hours: 87, streak: 28, abbr: "TH" },
-    { rank: 5, name: "Võ Thành Long", hours: 76, streak: 21, abbr: "TL" },
-  ];
+  const [leaderboard, setLeaderboard] = useState<ApiRankUser[]>([]);
+  useEffect(() => {
+    getLeaderboard()
+      .then((rows) => setLeaderboard(rows.slice(0, 5)))
+      .catch(() => setLeaderboard([]));
+  }, []);
 
   const stats = [
     { value: "48,000+", label: "Học viên đang dùng" },

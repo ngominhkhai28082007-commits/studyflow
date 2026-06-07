@@ -1,15 +1,46 @@
+import { useEffect, useState } from "react";
 import { PageShell } from "./PageShell";
 import { DogAvatar } from "./DogAvatar";
-import { leaderboard } from "./mockData";
+import { getLeaderboard, type ApiRankUser } from "../lib/api";
 
 const mono = { fontFamily: "'JetBrains Mono', monospace" };
 const rankEmoji = ["🥇", "🥈", "🥉"];
 
 export function RankingPage({ onBack }: { onBack: () => void }) {
-  const me = leaderboard.find((u) => u.isMe);
+  const [rows, setRows] = useState<ApiRankUser[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getLeaderboard()
+      .then(setRows)
+      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được bảng xếp hạng"));
+  }, []);
+
+  if (error) {
+    return (
+      <PageShell title="Xếp hạng" tag="xếp_hạng" onBack={onBack}>
+        <div className="text-sm text-red-400">{error}</div>
+      </PageShell>
+    );
+  }
+  if (!rows) {
+    return (
+      <PageShell title="Xếp hạng" tag="xếp_hạng" onBack={onBack}>
+        <div className="text-sm text-muted-foreground">Đang tải…</div>
+      </PageShell>
+    );
+  }
+
+  const me = rows.find((u) => u.isMe);
 
   return (
     <PageShell title="Xếp hạng" tag="xếp_hạng" onBack={onBack}>
+      {rows.length === 0 && (
+        <div className="text-sm text-muted-foreground mb-6">
+          Chưa có ai học trong tuần này. Hãy là người đầu tiên!
+        </div>
+      )}
+
       {me && (
         <div className="mb-6 p-5 rounded-xl bg-primary/10 border border-primary/30 flex items-center gap-4">
           <DogAvatar level={me.level} size={56} />
@@ -27,13 +58,13 @@ export function RankingPage({ onBack }: { onBack: () => void }) {
       <div className="rounded-xl bg-card border border-border overflow-hidden">
         <div className="px-5 py-3 border-b border-border flex items-center justify-between">
           <span className="text-sm font-semibold">Top học viên tuần này</span>
-          <span className="text-xs text-muted-foreground" style={mono}>mock</span>
+          <span className="text-xs text-muted-foreground" style={mono}>live</span>
         </div>
-        {leaderboard.map((u, i) => (
+        {rows.map((u, i) => (
           <div
-            key={u.rank}
+            key={`${u.rank}-${u.name}`}
             className={`px-4 py-3 flex items-center gap-3 ${
-              i < leaderboard.length - 1 ? "border-b border-border" : ""
+              i < rows.length - 1 ? "border-b border-border" : ""
             } ${u.isMe ? "bg-primary/10" : "hover:bg-primary/5"} transition-colors`}
           >
             <div

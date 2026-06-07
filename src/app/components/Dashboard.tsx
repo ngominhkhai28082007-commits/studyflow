@@ -88,13 +88,6 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <button
-        onClick={onLogout}
-        className="fixed top-4 right-4 z-50 text-xs px-3 py-2 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
-      >
-        Đăng xuất
-      </button>
-
       {/* Header */}
       <nav className="border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -110,7 +103,13 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onLogout}
+              className="text-xs px-3 py-2 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Đăng xuất
+            </button>
             <AppMenu onSelect={setActivePanel} />
           </div>
         </div>

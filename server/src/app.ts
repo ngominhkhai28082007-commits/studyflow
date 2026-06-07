@@ -4,6 +4,7 @@ import { authRouter } from "./routes/auth";
 import { tasksRouter } from "./routes/tasks";
 import { sessionsRouter } from "./routes/sessions";
 import { statsRouter } from "./routes/stats";
+import { leaderboardRouter } from "./routes/leaderboard";
 
 export function createApp() {
   const app = express();
@@ -19,6 +20,7 @@ export function createApp() {
   app.use("/api/tasks", tasksRouter);
   app.use("/api/sessions", sessionsRouter);
   app.use("/api/stats", statsRouter);
+  app.use("/api/leaderboard", leaderboardRouter);
 
   return app;
 }

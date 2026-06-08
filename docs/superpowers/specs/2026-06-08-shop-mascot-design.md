@@ -8,9 +8,11 @@
 Biến Shop và Mascot từ **dữ liệu giả** (`mockData.ts`) thành tính năng **thật**, lưu trong database theo từng người dùng:
 
 - Kiếm **xu** thật bằng cách học (1 phút học = 1 xu).
-- **Mua** linh vật bằng xu → lưu lại (sở hữu vĩnh viễn).
+- **Mua** linh vật bằng xu → lưu lại (sở hữu vĩnh viễn). **Mua một chiều — KHÔNG hoàn xu, KHÔNG bán lại.**
 - **Chọn** linh vật đang dùng → lưu lại (F5 không mất).
+- **Mọi linh vật đều có 5 cấp** (level 0–4) lên theo giờ học (yêu cầu chính thức — phần ảnh đã xong).
 - Linh vật đang dùng **hiển thị** ở trang chính và phòng học.
+- **Phòng học THẬT, data THẬT** — phòng học chung **realtime nhiều người**: người dùng thật cùng vào, thấy nhau online và giờ học tăng theo thời gian thực (thay danh sách người giả hiện tại). *Đây là hệ thống lớn riêng — xem mục "Phòng học realtime" và sẽ có spec/kế hoạch riêng.*
 
 **Quyết định nền tảng (đã chốt với người dùng):**
 - **Hướng B** — lưu **số dư xu thật** trên bảng `User` (cột `coins`) + **bảng giao dịch `Purchase`**. (Không dùng cách suy ra xu từ phiên học.) Lý do chọn B: mở đường cho các nguồn xu khác sau này (vd thưởng streak).
@@ -29,10 +31,19 @@ Người dùng yêu cầu: **mọi linh vật đều có 5 cấp cảm xúc như
 - File đặt ở `src/assets/mascot/{dog,bunny,dragon,owl}_{0..4}.svg`. `MascotIcon.tsx` đã cập nhật: `SPRITES` có mảng 5 cấp cho cả 4 con. Đã xoá 3 file single-pose cũ (`owl.svg`, `bunny.svg`, `dragon.svg`). `vite build` xanh.
 - Render kiểm tra: `tools/mascot_out/all/_all_preview.png` (đã được người dùng duyệt).
 
-## Ngoài phạm vi (YAGNI)
+## Quy tắc bắt buộc
 
-- Phòng học chung **realtime** (danh sách người học cùng trong `FocusRoom` vẫn là giả).
-- Bán lại / hoàn xu linh vật.
+- **Giao dịch một chiều:** đã mua linh vật là **sở hữu vĩnh viễn**. **KHÔNG** hỗ trợ hoàn xu (refund) hay bán lại (resell). Backend `buy` chỉ cộng sở hữu + trừ xu; không có endpoint nào trả xu lại.
+- **Mọi linh vật 5 cấp:** mọi con (Cún/Thỏ/Rồng/Cú) đều dùng `MascotIcon` với `level` 0–4 theo tổng giờ học — không còn con nào "một dáng cố định".
+
+## Phòng học realtime (mục tiêu mới — TÁCH SPEC RIÊNG)
+
+Người dùng muốn phòng học là **realtime nhiều người thật**. Đây là một subsystem lớn (presence + đồng bộ thời gian thực) tách hẳn khỏi xu/shop, nên **sẽ có spec + kế hoạch riêng** (`docs/superpowers/specs/2026-06-08-realtime-study-room-design.md`) thay vì nhồi vào spec này. Lý do tách: khác hoàn toàn về kỹ thuật (WebSocket/polling, lưu presence), rủi ro riêng (Render free tier ngủ sau ~15 phút, giới hạn kết nối), và để mỗi spec đủ nhỏ cho một kế hoạch triển khai.
+
+Trong phạm vi spec NÀY, phần phòng học chỉ gồm: **hiển thị đúng linh vật + cấp của CHÍNH người dùng** trong `FocusRoom` (fix bug linh vật kẹt ở Cún). Phần "thấy người khác realtime" thuộc spec riêng ở trên.
+
+## Ngoài phạm vi spec này (để sau)
+
 - Nguồn xu khác ngoài giờ học (thưởng streak/login) — để spec sau (Hướng B đã chừa đường).
 
 ---
@@ -199,7 +210,7 @@ export async function selectMascot(mascotId: string): Promise<{ selectedMascot: 
 ### 5. `app/components/FocusRoom.tsx`
 
 - Nhận thêm prop `selectedMascot`, `level`. Hiện linh vật của người dùng **to** (hero) khi đang học; thẻ "Bạn" trong lưới dùng `MascotIcon` linh vật đang chọn thay cho `DogAvatar` cố định.
-- Danh sách người khác giữ nguyên là giả (ghi chú: realtime ngoài phạm vi).
+- Danh sách "người học cùng" tạm giữ giả trong spec này; sẽ được thay bằng **người thật realtime** ở spec riêng `2026-06-08-realtime-study-room-design.md`.
 
 > **⚠️ BUG BẮT BUỘC PHẢI FIX (người dùng đã gặp):** hiện `FocusRoom` **đóng cứng `DogAvatar`** cho thẻ "Bạn", nên đổi linh vật xong vào phòng học **vẫn thấy con Cún**. Sau khi sửa: đổi linh vật ở MascotPage → vào phòng học (bắt đầu một phiên) → phải thấy **đúng linh vật vừa chọn**. `Dashboard` truyền `selectedMascot`+`level` xuống `FocusRoom`; vì Dashboard tải lại trạng thái khi quay về từ MascotPage nên giá trị truyền vào phòng học luôn là mới nhất. Đây là một mục kiểm thử riêng (xem Tiêu chí hoàn thành).
 

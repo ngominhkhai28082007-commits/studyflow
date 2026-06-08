@@ -7,12 +7,15 @@ import { RankingPage } from "./RankingPage";
 import { MascotPage } from "./MascotPage";
 import { ShopPage } from "./ShopPage";
 import { ChangePasswordPage } from "./ChangePasswordPage";
+import { MascotIcon } from "./MascotIcon";
 import {
   listTasks,
   createTask as apiCreateTask,
   deleteTask as apiDeleteTask,
   recordSession,
+  getShop,
   type ApiTask,
+  type ShopState,
 } from "../lib/api";
 
 export function Dashboard({ onLogout }: { onLogout: () => void }) {
@@ -22,7 +25,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [currentTask, setCurrentTask] = useState<string | null>(null);
   const [newTaskName, setNewTaskName] = useState("");
   const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
-  const [selectedMascot, setSelectedMascot] = useState("dog");
+  const [shop, setShop] = useState<ShopState | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const refreshTasks = async () => {
@@ -30,10 +33,15 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
     setTasks(data);
   };
 
+  const refreshShop = () => {
+    getShop().then(setShop).catch(() => {/* header mascot is non-critical */});
+  };
+
   useEffect(() => {
     refreshTasks()
       .catch((e) => setError(e instanceof Error ? e.message : "Không tải được danh sách công việc"))
       .finally(() => setLoading(false));
+    refreshShop();
   }, []);
 
   const totalTime = tasks.reduce((sum, t) => sum + t.todaySeconds, 0);
@@ -90,18 +98,27 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   if (activePanel) {
-    const back = () => setActivePanel(null);
+    const back = () => {
+      setActivePanel(null);
+      refreshShop(); // pick up coin/mascot changes made in Shop/Mascot
+    };
     if (activePanel === "stats") return <StatsPage onBack={back} />;
     if (activePanel === "ranking") return <RankingPage onBack={back} />;
-    if (activePanel === "mascot")
-      return <MascotPage onBack={back} selected={selectedMascot} onSelect={setSelectedMascot} />;
+    if (activePanel === "mascot") return <MascotPage onBack={back} onChanged={refreshShop} />;
     if (activePanel === "shop") return <ShopPage onBack={back} />;
     if (activePanel === "password") return <ChangePasswordPage onBack={back} />;
   }
 
   if (showRoom && currentTask) {
     const task = tasks.find((t) => t.id === currentTask);
-    return <FocusRoom taskName={task?.name || ""} onExit={exitRoom} />;
+    return (
+      <FocusRoom
+        taskName={task?.name || ""}
+        onExit={exitRoom}
+        mascotId={shop?.selectedMascot ?? "dog"}
+        mascotLevel={shop?.level ?? 0}
+      />
+    );
   }
 
   return (
@@ -122,6 +139,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
 
           <div className="flex items-center gap-3">
+            {shop && <MascotIcon id={shop.selectedMascot} level={shop.level} size={32} />}
             <button
               onClick={onLogout}
               className="text-xs px-3 py-2 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"

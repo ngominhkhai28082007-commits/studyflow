@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Users } from "lucide-react";
 import { DogAvatar } from "./DogAvatar";
+import { MascotIcon } from "./MascotIcon";
 
 interface FocusUser {
   id: string;
@@ -12,9 +13,11 @@ interface FocusUser {
 interface FocusRoomProps {
   taskName: string;
   onExit: (seconds: number) => void;
+  mascotId: string;
+  mascotLevel: number;
 }
 
-export function FocusRoom({ taskName, onExit }: FocusRoomProps) {
+export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoomProps) {
   const [sessionTime, setSessionTime] = useState(0);
 
   // CHƯA THẬT (mock): phòng học chung realtime nằm ngoài phạm vi GĐ3 (xem spec §13).
@@ -126,9 +129,13 @@ export function FocusRoom({ taskName, onExit }: FocusRoomProps) {
                 }`}
               >
                 <div className="flex flex-col items-center text-center">
-                  {/* Dog Avatar */}
+                  {/* Avatar — current user shows their chosen mascot; others stay placeholder dogs */}
                   <div className="mb-4">
-                    <DogAvatar level={level} size={80} />
+                    {isCurrentUser ? (
+                      <MascotIcon id={mascotId} level={mascotLevel} size={80} />
+                    ) : (
+                      <DogAvatar level={level} size={80} />
+                    )}
                   </div>
 
                   {/* User info */}

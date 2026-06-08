@@ -116,3 +116,31 @@ export async function getStats(): Promise<ApiStats> {
 export async function getLeaderboard(): Promise<ApiRankUser[]> {
   return apiFetch("/api/leaderboard");
 }
+
+export interface ShopMascot {
+  id: string;
+  name: string;
+  desc: string;
+  price: number;
+  purchasable: boolean;
+  owned: boolean;
+}
+
+export interface ShopState {
+  coins: number;
+  selectedMascot: string;
+  level: number;
+  mascots: ShopMascot[];
+}
+
+export async function getShop(): Promise<ShopState> {
+  return apiFetch("/api/shop");
+}
+
+export async function buyMascot(mascotId: string): Promise<ShopState> {
+  return apiFetch("/api/shop/buy", { method: "POST", body: JSON.stringify({ mascotId }) });
+}
+
+export async function selectMascot(mascotId: string): Promise<{ selectedMascot: string }> {
+  return apiFetch("/api/mascot/select", { method: "POST", body: JSON.stringify({ mascotId }) });
+}

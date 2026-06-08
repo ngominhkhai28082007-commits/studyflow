@@ -44,34 +44,5 @@ export const stats = {
   avgPerDayHours: 2.2,
 };
 
-export interface MascotItem {
-  id: string;
-  name: string;
-  desc: string;
-  level: number;       // which DogAvatar level to preview
-  owned: boolean;
-  locked: boolean;     // "Sắp có"
-}
-
-export const mascots: MascotItem[] = [
-  { id: "dog", name: "Cún Chăm Chỉ", desc: "Lên cấp theo giờ học", level: 2, owned: true, locked: false },
-  { id: "owl", name: "Cú Thông Thái", desc: "Càng học càng sáng dạ", level: 0, owned: true, locked: false },
-  { id: "bunny", name: "Thỏ Siêng Năng", desc: "Chăm chỉ không ngừng", level: 0, owned: true, locked: false },
-  { id: "dragon", name: "Rồng Học Tập", desc: "Sức mạnh tri thức", level: 0, owned: true, locked: false },
-];
-
-export interface ShopItem {
-  id: string;
-  name: string;
-  price: number;
-  level: number; // preview
-  tag?: string;
-}
-
-export const coins = 1200;
-
-export const shopItems: ShopItem[] = [
-  { id: "bunny", name: "Thỏ Siêng Năng", price: 600, level: 0, tag: "Mới" },
-  { id: "owl", name: "Cú Thông Thái", price: 1200, level: 0, tag: "Hot" },
-  { id: "dragon", name: "Rồng Học Tập", price: 2500, level: 0, tag: "Huyền thoại" },
-];
+// NOTE: shop/mascot data is now real (server-backed via /api/shop). The old
+// `coins`, `shopItems`, `mascots` mocks were removed — see ShopPage/MascotPage.

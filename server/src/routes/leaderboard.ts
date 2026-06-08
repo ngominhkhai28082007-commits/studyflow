@@ -18,6 +18,7 @@ leaderboardRouter.get("/", optionalAuth, asyncHandler(async (req, res) => {
       id: true,
       name: true,
       createdAt: true,
+      selectedMascot: true,
       studySessions: { select: { seconds: true, startedAt: true } },
     },
   });
@@ -30,7 +31,7 @@ leaderboardRouter.get("/", optionalAuth, asyncHandler(async (req, res) => {
       keys.add(k);
       if (weekSet.has(k)) weeklySeconds += s.seconds;
     }
-    return { id: u.id, name: u.name, createdAt: u.createdAt, weeklySeconds, streak: computeStreak(keys, now) };
+    return { id: u.id, name: u.name, createdAt: u.createdAt, selectedMascot: u.selectedMascot, weeklySeconds, streak: computeStreak(keys, now) };
   });
 
   // Chỉ xếp hạng người CÓ giờ học trong tuần. Giờ nhiều hơn xếp trên;
@@ -49,6 +50,7 @@ leaderboardRouter.get("/", optionalAuth, asyncHandler(async (req, res) => {
       hours,
       streak: r.streak,
       level: levelFromHours(hours),
+      mascotId: r.selectedMascot,
       isMe: r.id === meId,
     };
   };

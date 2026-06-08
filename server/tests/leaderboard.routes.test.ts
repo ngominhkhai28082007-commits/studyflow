@@ -42,6 +42,8 @@ describe("leaderboard API", () => {
     expect(res.body[0]).toHaveProperty("abbr");
     expect(res.body[0]).toHaveProperty("level");
     expect(res.body[0]).toHaveProperty("streak");
+    expect(res.body[0]).toHaveProperty("mascotId");
+    expect(res.body[0].mascotId).toBe("dog"); // default value from schema
   });
 
   it("gọi không token vẫn ra bảng, không dòng nào isMe", async () => {

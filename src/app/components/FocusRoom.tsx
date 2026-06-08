@@ -19,6 +19,7 @@ interface FocusUser {
   name: string;
   abbr: string;
   totalSeconds: number; // total accumulated time in seconds
+  isCurrentUser?: boolean;
 }
 
 interface FocusRoomProps {
@@ -43,7 +44,7 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
     { id: "5", name: "Võ Thành Long", abbr: "VL", totalSeconds: 0.5 * 3600 }, // 1800 seconds
     { id: "6", name: "Bùi Minh Anh", abbr: "MA", totalSeconds: 1.2 * 3600 }, // 4320 seconds
     { id: "7", name: "Đặng Văn Sơn", abbr: "VS", totalSeconds: 6.7 * 3600 }, // 24120 seconds
-    { id: "8", name: "current", abbr: "BẠN", totalSeconds: 3.5 * 3600 }, // Current user: 12600 seconds
+    { id: "8", name: "current", abbr: "BẠN", totalSeconds: 3.5 * 3600, isCurrentUser: true },
   ]);
 
   const handleTick = useCallback(() => {
@@ -143,7 +144,7 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {users.map((user) => {
             const level = getUserLevel(user.totalSeconds);
-            const isCurrentUser = user.id === "8";
+            const isCurrentUser = user.isCurrentUser === true;
 
             return (
               <div

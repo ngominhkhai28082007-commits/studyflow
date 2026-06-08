@@ -192,6 +192,8 @@ export async function selectMascot(mascotId: string): Promise<{ selectedMascot: 
 - Nhận thêm prop `selectedMascot`, `level`. Hiện linh vật của người dùng **to** (hero) khi đang học; thẻ "Bạn" trong lưới dùng `MascotIcon` linh vật đang chọn thay cho `DogAvatar` cố định.
 - Danh sách người khác giữ nguyên là giả (ghi chú: realtime ngoài phạm vi).
 
+> **⚠️ BUG BẮT BUỘC PHẢI FIX (người dùng đã gặp):** hiện `FocusRoom` **đóng cứng `DogAvatar`** cho thẻ "Bạn", nên đổi linh vật xong vào phòng học **vẫn thấy con Cún**. Sau khi sửa: đổi linh vật ở MascotPage → vào phòng học (bắt đầu một phiên) → phải thấy **đúng linh vật vừa chọn**. `Dashboard` truyền `selectedMascot`+`level` xuống `FocusRoom`; vì Dashboard tải lại trạng thái khi quay về từ MascotPage nên giá trị truyền vào phòng học luôn là mới nhất. Đây là một mục kiểm thử riêng (xem Tiêu chí hoàn thành).
+
 ### 6. `app/components/mockData.ts`
 
 - Xoá `coins`, `shopItems`, `mascots` (đã chuyển sang API). Giữ phần còn lại nếu nơi khác vẫn dùng (kiểm tra import trước khi xoá).
@@ -204,5 +206,6 @@ export async function selectMascot(mascotId: string): Promise<{ selectedMascot: 
 - [ ] Backend: 3 endpoint + cộng xu khi ghi phiên; toàn bộ test mới pass và test cũ không hỏng.
 - [ ] Frontend: `vite build` không lỗi TypeScript; Shop/Mascot lấy dữ liệu thật, không còn phụ thuộc mock.
 - [ ] Linh vật đang dùng hiển thị ở header trang chính và trong phòng học.
+- [ ] **Đổi linh vật → vào phòng học hiển thị đúng linh vật mới** (không còn kẹt ở Cún như bug cũ).
 - [ ] Verify trên bản thật: học một phiên → xu tăng; (tài khoản seed xu) mua linh vật → xu giảm, sở hữu; chọn linh vật → F5 vẫn giữ.
 - [ ] Push lên GitHub → Render + Vercel tự deploy.

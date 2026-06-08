@@ -108,7 +108,7 @@ export default function App() {
   }
 
   if (user) {
-    return <Dashboard onLogout={() => { apiLogout(); setUser(null); }} />;
+    return <Dashboard userName={user.name} onLogout={() => { apiLogout(); setUser(null); }} />;
   }
 
   return (

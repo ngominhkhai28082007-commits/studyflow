@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Plus, X, Flame } from "lucide-react";
+import { Play, Plus, X, Flame, Coins } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
 import { AppMenu, PanelKey } from "./AppMenu";
 import { StatsPage } from "./StatsPage";
@@ -18,7 +18,7 @@ import {
   type ShopState,
 } from "../lib/api";
 
-export function Dashboard({ onLogout }: { onLogout: () => void }) {
+export function Dashboard({ onLogout, userName }: { onLogout: () => void; userName: string }) {
   const [tasks, setTasks] = useState<ApiTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRoom, setShowRoom] = useState(false);
@@ -139,6 +139,18 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
 
           <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold truncate max-w-[160px]">{userName}</span>
+              {shop !== null && (
+                <div
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/15 text-yellow-500 text-xs font-bold"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  <Coins size={13} />
+                  {shop.coins.toLocaleString()}
+                </div>
+              )}
+            </div>
             {shop && <MascotIcon id={shop.selectedMascot} level={shop.level} size={32} />}
             <button
               onClick={onLogout}

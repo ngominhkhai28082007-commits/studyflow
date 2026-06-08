@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python tools/probe.py src/imports/df8eeadd-7353-4ded-963b-1d163625d2ce.jpg src/imports/image-1.png)"
+      "Bash(python tools/probe.py src/imports/df8eeadd-7353-4ded-963b-1d163625d2ce.jpg src/imports/image-1.png)",
+      "mcp__mcp-registry__search_mcp_registry",
+      "Bash(gh api *)",
+      "Read(//c/Users/Ngo Minh Khai/**)",
+      "Bash(npx uipro-cli *)"
     ]
   }
 }

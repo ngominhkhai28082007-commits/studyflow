@@ -1,61 +1,78 @@
-**Add your own guidelines here**
-<!--
+# AI Coding Guidelines for Studyflow
 
-System Guidelines
+These rules apply to **every AI assistant** (Claude, Gemini, GPT, etc.) working in this project.
+Follow them strictly before writing any code.
 
-Use this file to provide the AI with rules and guidelines you want it to follow.
-This template outlines a few examples of things you can add. You can add your own sections and format it to suit your needs
+---
 
-TIP: More context isn't always better. It can confuse the LLM. Try and add the most important rules you need
+## 🛑 Rule 1 — Ask Before You Code
 
-# General guidelines
+Before writing **any** code, you **must** ask up to **10 clarifying questions** covering:
 
-Any general rules you want the AI to follow.
-For example:
+### Data & Structure
+- What does the data model look like? (schemas, types, relationships)
+- Where does the data come from? (API, local state, database, file)
+- Are there any existing data structures already in use?
 
-* Only use absolute positioning when necessary. Opt for responsive and well structured layouts that use flexbox and grid by default
-* Refactor code as you go to keep code clean
-* Keep file sizes small and put helper functions and components in their own files.
+### UI/UX Expectations
+- What should this look like? (layout, components, responsive?)
+- Is there an existing design or wireframe to follow?
+- What is the user flow / interaction pattern?
 
---------------
+### Technical Constraints
+- Are there performance requirements? (load time, bundle size, etc.)
+- Any accessibility requirements? (WCAG, keyboard navigation, screen reader)
+- Are there browser or device targets?
+- Does this need to integrate with existing modules or APIs?
 
-# Design system guidelines
-Rules for how the AI should make generations look like your company's design system
+---
 
-Additionally, if you select a design system to use in the prompt box, you can reference
-your design system's components, tokens, variables and components.
-For example:
+## 🚫 Rule 2 — Never Assume
 
-* Use a base font-size of 14px
-* Date formats should always be in the format “Jun 10”
-* The bottom toolbar should only ever have a maximum of 4 items
-* Never use the floating action button with the bottom toolbar
-* Chips should always come in sets of 3 or more
-* Don't use a dropdown if there are 2 or fewer options
+Do **not** assume any of the following — always ask:
 
-You can also create sub sections and add more specific details
-For example:
+| Category | Do NOT assume |
+|---|---|
+| Frontend | Framework (React, Vue, Svelte, Vanilla JS, etc.) |
+| Styling | Library (Tailwind, CSS Modules, Styled Components, plain CSS, etc.) |
+| Backend | Stack (Node, Python, serverless, BaaS, etc.) |
+| Storage | Approach (SQL, NoSQL, localStorage, cloud, etc.) |
+| Auth | Method (JWT, session, OAuth, etc.) |
+| State | Management strategy (Redux, Zustand, Context, signals, etc.) |
 
+---
 
-## Button
-The Button component is a fundamental interactive element in our design system, designed to trigger actions or navigate
-users through the application. It provides visual feedback and clear affordances to enhance user experience.
+## ✅ Rule 3 — Propose a Plan First
 
-### Usage
-Buttons should be used for important actions that users need to take, such as form submissions, confirming choices,
-or initiating processes. They communicate interactivity and should have clear, action-oriented labels.
+After receiving answers to your questions, you must:
 
-### Variants
-* Primary Button
-  * Purpose : Used for the main action in a section or page
-  * Visual Style : Bold, filled with the primary brand color
-  * Usage : One primary button per section to guide users toward the most important action
-* Secondary Button
-  * Purpose : Used for alternative or supporting actions
-  * Visual Style : Outlined with the primary color, transparent background
-  * Usage : Can appear alongside a primary button for less important actions
-* Tertiary Button
-  * Purpose : Used for the least important actions
-  * Visual Style : Text-only with no border, using primary color
-  * Usage : For actions that should be available but not emphasized
--->
+1. **Write a step-by-step implementation plan** before any code
+2. **Explain key design decisions** briefly (why this approach, not another)
+3. **List any trade-offs or risks** if relevant
+
+Format the plan clearly so it is easy to review.
+
+---
+
+## ⏸️ Rule 4 — Wait for Confirmation
+
+After presenting the implementation plan:
+
+- **Do not write any code** until the user explicitly says:
+  - "approved", "go ahead", "looks good", "proceed", or similar confirmation
+- If the user asks for changes to the plan → revise the plan and wait again
+- If the user approves → then begin coding, following the confirmed plan exactly
+
+---
+
+## 📌 General Coding Rules
+
+- Refactor as you go — keep code clean and readable
+- Keep files small — extract helpers and components into their own files
+- Prefer responsive layouts using flexbox/grid over absolute positioning
+- Write self-documenting code; add comments only where intent is non-obvious
+- Do not remove existing comments or documentation unless asked
+
+---
+
+*Last updated: 2026-06-08*

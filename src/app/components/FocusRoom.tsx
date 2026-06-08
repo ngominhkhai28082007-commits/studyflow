@@ -3,6 +3,16 @@ import { ArrowLeft } from "lucide-react";
 import { DogAvatar } from "./DogAvatar";
 import { MascotIcon } from "./MascotIcon";
 import { PomodoroTimer } from "./PomodoroTimer";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 interface FocusUser {
   id: string;
@@ -20,6 +30,7 @@ interface FocusRoomProps {
 
 export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoomProps) {
   const [sessionTime, setSessionTime] = useState(0);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   // CHƯA THẬT (mock): phòng học chung realtime nằm ngoài phạm vi GĐ3 (xem spec §13).
   // Danh sách người trong phòng và getUserLevel() bên dưới chỉ để minh hoạ giao diện;
@@ -64,7 +75,7 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
       <nav className="border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <button
-            onClick={() => onExit(sessionTime)}
+            onClick={() => setShowExitConfirm(true)}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft size={18} />
@@ -81,6 +92,26 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
           </div>
         </div>
       </nav>
+
+      <AlertDialog open={showExitConfirm} onOpenChange={setShowExitConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Thoát phòng học?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Phiên học {formatTime(sessionTime)} sẽ được lưu lại.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Tiếp tục học</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => onExit(sessionTime)}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Thoát
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Room Content */}
       <div className="max-w-6xl mx-auto px-6 py-12">

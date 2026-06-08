@@ -47,3 +47,23 @@ shopRouter.post("/buy", requireAuth, asyncHandler(async (req, res) => {
   const state = await buildShopState(user.id);
   return res.json(state);
 }));
+
+mascotRouter.post("/select", requireAuth, asyncHandler(async (req, res) => {
+  const parsed = mascotIdSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+  const { mascotId } = parsed.data;
+
+  if (!findMascot(mascotId)) return res.status(400).json({ error: "Linh vật không hợp lệ" });
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+    include: { purchases: true },
+  });
+  if (!user) return res.status(401).json({ error: "Không tìm thấy người dùng" });
+
+  const owned = mascotId === DEFAULT_MASCOT || user.purchases.some((p) => p.mascotId === mascotId);
+  if (!owned) return res.status(400).json({ error: "Bạn chưa sở hữu linh vật này" });
+
+  await prisma.user.update({ where: { id: user.id }, data: { selectedMascot: mascotId } });
+  return res.json({ selectedMascot: mascotId });
+}));

@@ -93,3 +93,29 @@ describe("POST /api/shop/buy", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("POST /api/mascot/select", () => {
+  it("chọn dog luôn được", async () => {
+    const { token } = await registerUser();
+    const res = await request(app).post("/api/mascot/select").set("Authorization", `Bearer ${token}`).send({ mascotId: "dog" });
+    expect(res.status).toBe(200);
+    expect(res.body.selectedMascot).toBe("dog");
+  });
+
+  it("chọn linh vật đã sở hữu → ok; chưa sở hữu → 400", async () => {
+    const { token, userId } = await registerUser();
+    const notOwned = await request(app).post("/api/mascot/select").set("Authorization", `Bearer ${token}`).send({ mascotId: "bunny" });
+    expect(notOwned.status).toBe(400);
+
+    await prisma.user.update({ where: { id: userId }, data: { coins: 2000 } });
+    await request(app).post("/api/shop/buy").set("Authorization", `Bearer ${token}`).send({ mascotId: "bunny" });
+    const owned = await request(app).post("/api/mascot/select").set("Authorization", `Bearer ${token}`).send({ mascotId: "bunny" });
+    expect(owned.status).toBe(200);
+    expect(owned.body.selectedMascot).toBe("bunny");
+  });
+
+  it("không token trả 401", async () => {
+    const res = await request(app).post("/api/mascot/select").send({ mascotId: "dog" });
+    expect(res.status).toBe(401);
+  });
+});

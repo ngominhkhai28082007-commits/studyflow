@@ -140,8 +140,8 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold truncate max-w-[160px]">{userName}</span>
-              {shop !== null && (
+              <span className="text-sm font-semibold truncate max-w-[160px]">{userName || "Người dùng"}</span>
+              {shop && (
                 <div
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/15 text-yellow-500 text-xs font-bold"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}

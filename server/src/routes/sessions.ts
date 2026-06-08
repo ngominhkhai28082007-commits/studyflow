@@ -20,9 +20,16 @@ sessionsRouter.post("/", asyncHandler(async (req, res) => {
   }
 
   const startedAt = new Date(Date.now() - seconds * 1000);
-  const session = await prisma.studySession.create({
-    data: { userId: req.userId!, taskId, seconds, startedAt },
-  });
+  const coinsEarned = Math.floor(seconds / 60); // 1 phút học = 1 xu (server quyết seconds → chống gian lận)
+  const [session] = await prisma.$transaction([
+    prisma.studySession.create({
+      data: { userId: req.userId!, taskId, seconds, startedAt },
+    }),
+    prisma.user.update({
+      where: { id: req.userId! },
+      data: { coins: { increment: coinsEarned } },
+    }),
+  ]);
   return res.status(201).json({
     id: session.id,
     taskId: session.taskId,

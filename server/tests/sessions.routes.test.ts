@@ -74,4 +74,17 @@ describe("sessions API", () => {
       .send({ taskId, seconds: 600 });
     expect(res.status).toBe(404);
   });
+
+  it("ghi phiên học cộng xu = số phút (làm tròn xuống)", async () => {
+    const { token, userId } = await makeUser("xu@example.com");
+    const taskId = await makeTask(token);
+
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ taskId, seconds: 120 });
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    expect(user?.coins).toBe(2);
+  });
 });

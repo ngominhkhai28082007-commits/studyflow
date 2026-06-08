@@ -19,10 +19,19 @@ Biến Shop và Mascot từ **dữ liệu giả** (`mockData.ts`) thành tính n
 - Giá (độ "Thách thức"): Thỏ **1200**, Cú **2400**, Rồng **4800**. Cún (mặc định) miễn phí.
 - Hiển thị linh vật ở **cả trang chính lẫn phòng học**.
 
+## Linh vật 5 cấp cho TẤT CẢ (đã làm xong phần ảnh — 2026-06-08)
+
+Người dùng yêu cầu: **mọi linh vật đều có 5 cấp cảm xúc như Cún** (trước đây chỉ Cún có 5 cấp). Đã sinh xong 20 ảnh SVG (4 con × 5 cấp) bằng script mới `tools/make_mascot_all.py`:
+
+- Một "bộ hiệu ứng" dùng chung (lửa/sao/mồ hôi/hào quang — đặt ở rìa canvas, độc lập con vật) + khung sách chung; mỗi con chỉ khác phần thân + **biểu cảm mắt/miệng theo cấp**.
+- Cún tái dùng `face()` cũ → **giống hệt ảnh đang chạy**. Thỏ/Rồng dùng `round_face()` (nhịp cảm xúc của Cún tại toạ độ mặt từng con). Cú xử lý riêng `owl_face()` (con ngươi trong mắt kính).
+- Nhịp cảm xúc 5 cấp: L0 lấp lánh+cười → L1 nhắm mắt thư thái → L2 nhíu mày+mồ hôi → L3 quyết tâm+lửa → L4 mắt xoáy+hào quang vàng.
+- File đặt ở `src/assets/mascot/{dog,bunny,dragon,owl}_{0..4}.svg`. `MascotIcon.tsx` đã cập nhật: `SPRITES` có mảng 5 cấp cho cả 4 con. Đã xoá 3 file single-pose cũ (`owl.svg`, `bunny.svg`, `dragon.svg`). `vite build` xanh.
+- Render kiểm tra: `tools/mascot_out/all/_all_preview.png` (đã được người dùng duyệt).
+
 ## Ngoài phạm vi (YAGNI)
 
 - Phòng học chung **realtime** (danh sách người học cùng trong `FocusRoom` vẫn là giả).
-- Cấp độ (level) cho Cú/Thỏ/Rồng — chỉ Cún có 5 cấp; các con khác một dáng cố định.
 - Bán lại / hoàn xu linh vật.
 - Nguồn xu khác ngoài giờ học (thưởng streak/login) — để spec sau (Hướng B đã chừa đường).
 

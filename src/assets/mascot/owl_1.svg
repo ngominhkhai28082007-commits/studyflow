@@ -1,36 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><defs>
-      <radialGradient id="ob" cx="50%" cy="38%" r="65%"><stop offset="60%" stop-color="#C9B8E8"/><stop offset="100%" stop-color="#B7A2DD"/></radialGradient>
-    </defs>
-  <!-- feet -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs><radialGradient id="ob" cx="50%" cy="38%" r="65%"><stop offset="60%" stop-color="#C9B8E8"/><stop offset="100%" stop-color="#B7A2DD"/></radialGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%"  stop-color="#FFE0A8"/>
+      <stop offset="55%" stop-color="#FFB27D"/>
+      <stop offset="100%" stop-color="#FF9E7D"/>
+    </linearGradient>
+    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A9C7E8"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter></defs>
+  <g></g>
+  
   <g stroke="#5B4636" stroke-width="4" fill="#F2A65A">
     <path d="M214,452 l-12,16 M214,452 l0,18 M214,452 l12,16"/>
     <path d="M298,452 l-12,16 M298,452 l0,18 M298,452 l12,16"/>
   </g>
-  <!-- ear tufts -->
   <path d="M176,150 l18,-58 l34,30 Z" fill="#C9B8E8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
   <path d="M336,150 l-18,-58 l-34,30 Z" fill="#C9B8E8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
-  <!-- body -->
   <ellipse cx="256" cy="288" rx="138" ry="160" fill="url(#ob)" stroke="#5B4636" stroke-width="5"/>
-  <!-- wings -->
   <path d="M126,250 q-18,70 24,150 q-30,-70 -10,-150 Z" fill="#B7A2DD" stroke="#5B4636" stroke-width="4"/>
   <path d="M386,250 q18,70 -24,150 q30,-70 10,-150 Z" fill="#B7A2DD" stroke="#5B4636" stroke-width="4"/>
-  <!-- belly -->
   <ellipse cx="256" cy="312" rx="86" ry="118" fill="#FBF3E9"/>
-  <!-- big eyes + wise glasses -->
   <circle cx="206" cy="214" r="46" fill="#fff" stroke="#5B4636" stroke-width="4"/>
   <circle cx="306" cy="214" r="46" fill="#fff" stroke="#5B4636" stroke-width="4"/>
-  <circle cx="210" cy="218" r="18" fill="#5B4636"/><circle cx="204" cy="212" r="6" fill="#fff"/>
-  <circle cx="302" cy="218" r="18" fill="#5B4636"/><circle cx="296" cy="212" r="6" fill="#fff"/>
-  <g fill="none" stroke="#5B4636" stroke-width="5"><circle cx="206" cy="214" r="40"/><circle cx="306" cy="214" r="40"/><line x1="246" y1="210" x2="266" y2="210"/></g>
-  <!-- beak -->
-  <path d="M256,238 l-16,22 l32,0 Z" fill="#F2A65A" stroke="#5B4636" stroke-width="4" stroke-linejoin="round"/>
+
+  <path d="M186,218 q20,16 40,0" fill="none" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/><path d="M286,218 q20,16 40,0" fill="none" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/><g fill="none" stroke="#5B4636" stroke-width="5"><circle cx="206" cy="214" r="40"/><circle cx="306" cy="214" r="40"/><line x1="246" y1="210" x2="266" y2="210"/></g><path d="M256,238 l-16,22 l32,0 Z" fill="#F2A65A" stroke="#5B4636" stroke-width="4" stroke-linejoin="round"/>
   
-  <ellipse cx="196" cy="372" rx="26" ry="18" fill="#FBF3E9" stroke="#5B4636" stroke-width="5"/>
-  <ellipse cx="316" cy="372" rx="26" ry="18" fill="#FBF3E9" stroke="#5B4636" stroke-width="5"/>
+  <ellipse cx="196" cy="372" rx="26" ry="18" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
+  <ellipse cx="316" cy="372" rx="26" ry="18" fill="#F7EAD9" stroke="#5B4636" stroke-width="5"/>
   <path d="M150,392 L256,372 L256,432 L156,452 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
   <path d="M362,392 L256,372 L256,432 L356,452 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M150,392 L256,372 L256,432 L156,452 Z M362,392 L256,372 L256,432 L356,452 Z" fill="#A9C7E8" opacity="0.45"/>
+  <path d="M150,392 L256,372 L256,432 L156,452 Z M362,392 L256,372 L256,432 L356,452 Z" fill="url(#cover)" opacity="0.5"/>
   <line x1="172" y1="384" x2="248" y2="378" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="378" x2="340" y2="384" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="393" x2="248" y2="387" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="387" x2="340" y2="393" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="402" x2="248" y2="396" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="396" x2="340" y2="402" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="172" y1="411" x2="248" y2="405" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/><line x1="264" y1="405" x2="340" y2="411" stroke="#D9C7AE" stroke-width="3" stroke-linecap="round"/>
   <line x1="256" y1="372" x2="256" y2="432" stroke="#5B4636" stroke-width="4"/>
 
+  <g></g>
 </svg>

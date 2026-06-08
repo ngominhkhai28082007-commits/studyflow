@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Users } from "lucide-react";
+import { useState, useCallback } from "react";
+import { ArrowLeft } from "lucide-react";
 import { DogAvatar } from "./DogAvatar";
 import { MascotIcon } from "./MascotIcon";
+import { PomodoroTimer } from "./PomodoroTimer";
 
 interface FocusUser {
   id: string;
@@ -34,19 +35,9 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
     { id: "8", name: "current", abbr: "BẠN", totalSeconds: 3.5 * 3600 }, // Current user: 12600 seconds
   ]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionTime((prev) => prev + 1);
-      // Update all users' total time to simulate everyone focusing together
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => ({
-          ...user,
-          totalSeconds: user.totalSeconds + 1,
-        }))
-      );
-    }, 1000);
-
-    return () => clearInterval(interval);
+  const handleTick = useCallback(() => {
+    setSessionTime((s) => s + 1);
+    setUsers((prev) => prev.map((u) => ({ ...u, totalSeconds: u.totalSeconds + 1 })));
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -95,20 +86,24 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
           <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs mb-8"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             Đang tập trung: {taskName}
           </div>
 
+          <div className="mb-10">
+            <PomodoroTimer onTick={handleTick} />
+          </div>
+
           <h1
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            className="text-4xl lg:text-5xl font-black tracking-tight mb-4"
+            className="text-2xl font-black tracking-tight mb-2 text-muted-foreground"
           >
             Phòng học chung
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {users.length} người đang cùng tập trung
           </p>
         </div>

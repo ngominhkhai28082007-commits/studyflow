@@ -6,6 +6,7 @@ import { tasksRouter } from "./routes/tasks";
 import { sessionsRouter } from "./routes/sessions";
 import { statsRouter } from "./routes/stats";
 import { leaderboardRouter } from "./routes/leaderboard";
+import { shopRouter, mascotRouter } from "./routes/shop";
 
 interface CreateAppOptions {
   // Cấu hình rate-limit cho /api/auth. Mặc định: BẬT ở production (chống dò
@@ -53,6 +54,8 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api/sessions", sessionsRouter);
   app.use("/api/stats", statsRouter);
   app.use("/api/leaderboard", leaderboardRouter);
+  app.use("/api/shop", shopRouter);
+  app.use("/api/mascot", mascotRouter);
 
   // Error-handling middleware (4 tham số): mọi lỗi do asyncHandler chuyển tới
   // sẽ vào đây, trả 500 thay vì để request treo.

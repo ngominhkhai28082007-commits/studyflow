@@ -451,10 +451,7 @@ export default function App() {
                 </button>
 
                 <p className="text-center text-xs text-muted-foreground leading-relaxed">
-                  Bằng cách đăng ký, bạn đồng ý với{" "}
-                  <a href="#" className="text-primary hover:underline">Điều khoản dịch vụ</a>
-                  {" "}và{" "}
-                  <a href="#" className="text-primary hover:underline">Chính sách bảo mật</a>
+                  Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.
                 </p>
               </form>
             ) : (
@@ -470,10 +467,7 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-semibold">Mật khẩu</label>
-                    <a href="#" className="text-xs text-primary hover:underline">Quên mật khẩu?</a>
-                  </div>
+                  <label className="block text-sm font-semibold mb-2">Mật khẩu</label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
@@ -529,11 +523,6 @@ export default function App() {
           <p className="text-muted-foreground text-xs text-center">
             © 2026 FocusZone. Được xây dựng cho học sinh, sinh viên Việt Nam.
           </p>
-          <div className="flex gap-6 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Điều khoản</a>
-            <a href="#" className="hover:text-foreground transition-colors">Bảo mật</a>
-            <a href="#" className="hover:text-foreground transition-colors">Liên hệ</a>
-          </div>
         </div>
       </footer>
     </div>

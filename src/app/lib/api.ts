@@ -53,6 +53,16 @@ export async function fetchMe(): Promise<PublicUser> {
   return data.user as PublicUser;
 }
 
+export async function changePassword(input: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<void> {
+  await apiFetch("/api/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
 export function logout(): void {
   clearToken();
 }

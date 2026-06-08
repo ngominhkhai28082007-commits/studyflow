@@ -2,7 +2,7 @@ import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { hashPassword, verifyPassword } from "../lib/password";
 import { signToken } from "../lib/jwt";
-import { registerSchema, loginSchema } from "../validation/auth";
+import { registerSchema, loginSchema, changePasswordSchema } from "../validation/auth";
 import { requireAuth } from "../middleware/requireAuth";
 
 export const authRouter = Router();
@@ -56,4 +56,30 @@ authRouter.get("/me", requireAuth, async (req, res) => {
     return res.status(401).json({ error: "Không tìm thấy người dùng" });
   }
   return res.json({ user: toPublicUser(user) });
+});
+
+authRouter.post("/change-password", requireAuth, async (req, res) => {
+  const parsed = changePasswordSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.issues[0].message });
+  }
+  const { currentPassword, newPassword } = parsed.data;
+
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) {
+    return res.status(401).json({ error: "Không tìm thấy người dùng" });
+  }
+
+  const ok = await verifyPassword(currentPassword, user.password);
+  if (!ok) {
+    return res.status(401).json({ error: "Mật khẩu hiện tại không đúng" });
+  }
+
+  if (newPassword === currentPassword) {
+    return res.status(400).json({ error: "Mật khẩu mới phải khác mật khẩu hiện tại" });
+  }
+
+  const hashed = await hashPassword(newPassword);
+  await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
+  return res.json({ ok: true });
 });

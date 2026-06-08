@@ -6,6 +6,7 @@ import { StatsPage } from "./StatsPage";
 import { RankingPage } from "./RankingPage";
 import { MascotPage } from "./MascotPage";
 import { ShopPage } from "./ShopPage";
+import { ChangePasswordPage } from "./ChangePasswordPage";
 import {
   listTasks,
   createTask as apiCreateTask,
@@ -95,6 +96,7 @@ export function Dashboard({ onLogout }: { onLogout: () => void }) {
     if (activePanel === "mascot")
       return <MascotPage onBack={back} selected={selectedMascot} onSelect={setSelectedMascot} />;
     if (activePanel === "shop") return <ShopPage onBack={back} />;
+    if (activePanel === "password") return <ChangePasswordPage onBack={back} />;
   }
 
   if (showRoom && currentTask) {

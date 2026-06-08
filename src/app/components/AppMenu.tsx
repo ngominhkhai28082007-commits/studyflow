@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { LayoutGrid, BarChart3, Trophy, Sparkles, ShoppingBag } from "lucide-react";
+import { LayoutGrid, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound } from "lucide-react";
 
-export type PanelKey = "stats" | "ranking" | "mascot" | "shop";
+export type PanelKey = "stats" | "ranking" | "mascot" | "shop" | "password";
 
 const ITEMS: { key: PanelKey; label: string; desc: string; icon: typeof BarChart3 }[] = [
   { key: "stats", label: "Thống kê", desc: "Giờ học, streak, biểu đồ", icon: BarChart3 },
   { key: "ranking", label: "Xếp hạng", desc: "Xem hạng của bạn", icon: Trophy },
   { key: "mascot", label: "Studicon", desc: "Chọn linh vật", icon: Sparkles },
   { key: "shop", label: "Cửa hàng", desc: "Mua mascot mới", icon: ShoppingBag },
+  { key: "password", label: "Đổi mật khẩu", desc: "Cập nhật mật khẩu đăng nhập", icon: KeyRound },
 ];
 
 export function AppMenu({ onSelect }: { onSelect: (key: PanelKey) => void }) {

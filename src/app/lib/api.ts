@@ -91,6 +91,7 @@ export interface ApiRankUser {
   streak: number;
   level: number;
   isMe: boolean;
+  mascotId: string;
 }
 
 export async function listTasks(): Promise<ApiTask[]> {

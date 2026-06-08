@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { PageShell } from "./PageShell";
-import { DogAvatar } from "./DogAvatar";
+import { MascotIcon } from "./MascotIcon";
 import { getLeaderboard, type ApiRankUser } from "../lib/api";
 
 const mono = { fontFamily: "'JetBrains Mono', monospace" };
@@ -43,7 +43,7 @@ export function RankingPage({ onBack }: { onBack: () => void }) {
 
       {me && (
         <div className="mb-6 p-5 rounded-xl bg-primary/10 border border-primary/30 flex items-center gap-4">
-          <DogAvatar level={me.level} size={56} />
+          <MascotIcon id={me.mascotId} level={me.level} size={56} />
           <div className="flex-1">
             <div className="text-xs text-muted-foreground">Hạng của bạn tuần này</div>
             <div className="text-3xl font-black text-primary" style={mono}>#{me.rank}</div>
@@ -73,7 +73,7 @@ export function RankingPage({ onBack }: { onBack: () => void }) {
             >
               {u.rank <= 3 ? rankEmoji[u.rank - 1] : u.rank}
             </div>
-            <DogAvatar level={u.level} size={40} />
+            <MascotIcon id={u.mascotId} level={u.level} size={40} />
             <div className="flex-1 min-w-0">
               <div className="font-medium text-sm truncate">
                 {u.name}

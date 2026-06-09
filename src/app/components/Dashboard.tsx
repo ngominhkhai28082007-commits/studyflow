@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Plus, X, Flame, Coins, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound, LogOut } from "lucide-react";
+import { Play, Plus, X, Flame, Coins, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound, LogOut, Users } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
 import { StatsPage } from "./StatsPage";
 import { RankingPage } from "./RankingPage";
 import { MascotPage } from "./MascotPage";
 import { ShopPage } from "./ShopPage";
 import { ChangePasswordPage } from "./ChangePasswordPage";
+import { RoomsPage } from "./RoomsPage";
 import { MascotIcon } from "./MascotIcon";
 import Dock from "./Dock";
 import {
@@ -24,6 +25,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
   const [tasks, setTasks] = useState<ApiTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRoom, setShowRoom] = useState(false);
+  const [showRooms, setShowRooms] = useState(false);
   const [currentTask, setCurrentTask] = useState<string | null>(null);
   const [newTaskName, setNewTaskName] = useState("");
   const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
@@ -127,6 +129,18 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
     if (activePanel === "mascot") return <MascotPage onBack={back} onChanged={refreshShop} />;
     if (activePanel === "shop") return <ShopPage onBack={back} />;
     if (activePanel === "password") return <ChangePasswordPage onBack={back} />;
+  }
+
+  if (showRooms) {
+    return (
+      <RoomsPage
+        userName={userName}
+        mascotId={shop?.selectedMascot ?? "dog"}
+        mascotLevel={shop?.level ?? 0}
+        tasks={tasks}
+        onBack={() => setShowRooms(false)}
+      />
+    );
   }
 
   if (showRoom && currentTask) {
@@ -286,6 +300,11 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
             icon: <BarChart3 size={16} />,
             label: "Thống kê",
             onClick: () => setActivePanel("stats"),
+          },
+          {
+            icon: <Users size={16} />,
+            label: "Phòng học",
+            onClick: () => setShowRooms(true),
           },
           {
             icon: <Trophy size={16} />,

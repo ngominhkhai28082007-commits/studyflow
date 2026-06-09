@@ -36,7 +36,7 @@ export function PageShell({ title, tag, onBack, right, children }: PageShellProp
           className="text-xs text-primary uppercase tracking-widest mb-6"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          // {tag}
+          {tag}
         </div>
         {children}
       </div>

@@ -2,6 +2,19 @@ import { useState, useEffect } from "react";
 import { Timer, Users, Flame, Trophy, ChevronRight, Eye, EyeOff, BookOpen, Zap } from "lucide-react";
 import { Dashboard } from "./components/Dashboard";
 import { register as apiRegister, login as apiLogin, fetchMe, logout as apiLogout, getToken, type PublicUser, getLeaderboard, type ApiRankUser } from "./lib/api";
+import LightPillar from "./components/LightPillar";
+import ElectricBorder from "./components/ElectricBorder";
+import { motion } from "motion/react";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const containerVariant = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
 
 export default function App() {
   const [user, setUser] = useState<PublicUser | null>(null);
@@ -114,8 +127,35 @@ export default function App() {
   return (
     <div
       className="min-h-screen bg-background text-foreground overflow-x-hidden"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      style={{ fontFamily: "'Inter', sans-serif", position: 'relative' }}
     >
+      {/* LightPillar hero background */}
+      <div style={{
+        position: 'fixed', inset: 0,
+        pointerEvents: 'none', zIndex: 0,
+        overflow: 'hidden',
+      }}>
+        <LightPillar
+          topColor="#000000"
+          bottomColor="#F97316"
+          intensity={1.1}
+          rotationSpeed={1}
+          glowAmount={0.005}
+          pillarWidth={4.3}
+          pillarHeight={0.9}
+          noiseIntensity={1.7}
+          pillarRotation={28}
+          mixBlendMode="screen"
+          quality="high"
+        />
+        {/* fade to dark at bottom so text stays readable */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(10,8,16,0.45) 0%, rgba(10,8,16,0.75) 60%, rgba(10,8,16,0.97) 100%)',
+        }} />
+      </div>
+      {/* Content — sits above the WebGL background */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
       {/* NAV */}
       <nav className="fixed top-0 w-full z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -153,27 +193,32 @@ export default function App() {
 
       {/* HERO */}
       <section className="pt-32 pb-24 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs mb-8"
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariant}
+          className="max-w-4xl mx-auto text-center"
+        >
+          <motion.div variants={fadeUpVariant} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs mb-8"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             1,240 người đang học ngay lúc này
-          </div>
+          </motion.div>
 
-          <h1
+          <motion.h1
+            variants={fadeUpVariant}
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             className="text-5xl lg:text-7xl font-black leading-[1.03] tracking-tight mb-6"
           >
             Học tập.<br />
             <span className="text-primary">Tập trung.</span>{" "}
             Chinh phục.
-          </h1>
+          </motion.h1>
 
-          <p className="text-muted-foreground text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+          <motion.p variants={fadeUpVariant} className="text-muted-foreground text-lg leading-relaxed mb-10 max-w-xl mx-auto">
             Phương pháp Pomodoro kết hợp học nhóm realtime. Xây dựng thói quen học tập vững chắc mỗi ngày cùng cộng đồng.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
+          <motion.div variants={fadeUpVariant} className="flex flex-wrap justify-center gap-4 mb-10">
             <button
               onClick={() => scrollToAuth("register")}
               className="flex items-center gap-2 px-7 py-3.5 bg-primary text-white rounded-md font-semibold hover:opacity-90 transition-all group shadow-xl shadow-primary/30 text-base"
@@ -187,9 +232,9 @@ export default function App() {
             >
               Đăng nhập
             </button>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+          <motion.div variants={fadeUpVariant} className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Zap size={14} className="text-primary" />
               Miễn phí mãi mãi
@@ -199,15 +244,19 @@ export default function App() {
               <BookOpen size={14} className="text-primary" />
               Không cần thẻ tín dụng
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* STATS BAR */}
       <section className="py-12 border-y border-border" style={{ background: "rgba(16,16,28,0.6)" }}>
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariant}
+          className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8"
+        >
           {stats.map((s) => (
-            <div key={s.label} className="text-center">
+            <motion.div variants={fadeUpVariant} key={s.label} className="text-center">
               <div
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 className="text-3xl lg:text-4xl font-black text-foreground mb-1"
@@ -215,14 +264,18 @@ export default function App() {
                 {s.value}
               </div>
               <div className="text-muted-foreground text-sm">{s.label}</div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* FEATURES */}
       <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="mb-16">
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={fadeUpVariant}
+          className="mb-16"
+        >
           <div
             className="text-xs text-primary uppercase tracking-widest mb-4"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
@@ -235,45 +288,56 @@ export default function App() {
           >
             Mọi thứ bạn cần<br />để học tốt hơn
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariant}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
           {features.map((f) => (
-            <div
-              key={f.title}
-              className="group p-6 rounded-xl bg-card border border-border hover:-translate-y-1 transition-all duration-200 cursor-default"
-              style={{ borderColor: "rgba(255,255,255,0.08)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${f.color}40`)}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
-            >
-              <div
-                className="w-11 h-11 rounded-lg flex items-center justify-center mb-5"
-                style={{ backgroundColor: `${f.color}18` }}
+            <motion.div variants={fadeUpVariant} key={f.title}>
+              <ElectricBorder
+                color={f.color}
+                speed={0.6}
+                chaos={0.08}
+                borderRadius={12}
+                className="group h-full p-6 bg-card hover:-translate-y-1 transition-all duration-300 cursor-default shadow-lg"
+                style={{ borderRadius: "12px", background: "rgba(16,16,28,0.7)" }}
               >
-                <f.icon size={20} style={{ color: f.color }} />
-              </div>
-              <div
-                className="text-xs font-bold mb-2"
-                style={{ color: f.color, fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                {f.stat}
-              </div>
-              <h3
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                className="font-bold text-base mb-2 text-foreground"
-              >
-                {f.title}
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
-            </div>
+                <div
+                  className="w-11 h-11 rounded-lg flex items-center justify-center mb-5"
+                  style={{ backgroundColor: `${f.color}18` }}
+                >
+                  <f.icon size={20} style={{ color: f.color }} />
+                </div>
+                <div
+                  className="text-xs font-bold mb-2"
+                  style={{ color: f.color, fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  {f.stat}
+                </div>
+                <h3
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  className="font-bold text-base mb-2 text-foreground"
+                >
+                  {f.title}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+              </ElectricBorder>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* LEADERBOARD */}
       <section id="leaderboard" className="py-24 px-6 border-y border-border" style={{ background: "rgba(16,16,28,0.4)" }}>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-          <div>
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariant}
+          className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center"
+        >
+          <motion.div variants={fadeUpVariant}>
             <div
               className="text-xs text-primary uppercase tracking-widest mb-4"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
@@ -297,9 +361,9 @@ export default function App() {
               Vào bảng xếp hạng
               <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
-          </div>
+          </motion.div>
 
-          <div className="rounded-xl bg-card border border-border overflow-hidden shadow-2xl">
+          <motion.div variants={fadeUpVariant} className="rounded-xl bg-card border border-border overflow-hidden shadow-2xl">
             <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <span className="font-semibold text-sm">Top học viên tuần này</span>
               <span className="text-xs text-muted-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -343,13 +407,17 @@ export default function App() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+            </motion.div>
+        </motion.div>
       </section>
 
       {/* AUTH */}
       <section id="auth" className="py-24 px-6">
-        <div className="max-w-md mx-auto">
+        <motion.div 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          variants={fadeUpVariant}
+          className="max-w-md mx-auto"
+        >
           <div className="text-center mb-10">
             <div
               className="text-xs text-primary uppercase tracking-widest mb-4"
@@ -506,7 +574,7 @@ export default function App() {
               </form>
             )}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* FOOTER */}
@@ -525,6 +593,7 @@ export default function App() {
           </p>
         </div>
       </footer>
+      </div>{/* end content wrapper */}
     </div>
   );
 }

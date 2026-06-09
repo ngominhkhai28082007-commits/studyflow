@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { DogAvatar } from "./DogAvatar";
 import { MascotIcon } from "./MascotIcon";
 import { PomodoroTimer } from "./PomodoroTimer";
+import BorderGlow from "./BorderGlow";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -147,16 +148,24 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
             const isCurrentUser = user.isCurrentUser === true;
 
             return (
-              <div
+              <BorderGlow
                 key={user.id}
-                className={`p-6 rounded-xl bg-card border transition-all duration-300 hover:-translate-y-1 ${
+                borderRadius={16}
+                backgroundColor="var(--card, #1a1625)"
+                glowRadius={32}
+                edgeSensitivity={20}
+                coneSpread={30}
+                glowIntensity={isCurrentUser ? 1.2 : 0.9}
+                colors={
                   isCurrentUser
-                    ? "border-primary shadow-lg shadow-primary/20"
-                    : "border-border hover:border-primary/40"
-                }`}
+                    ? ['#ff4e00', '#ff8c00', '#ffd700']
+                    : ['#c084fc', '#f472b6', '#38bdf8']
+                }
+                glowColor={isCurrentUser ? '20 100 60' : '270 80 75'}
+                className="transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="flex flex-col items-center text-center">
-                  {/* Avatar — current user shows their chosen mascot; others stay placeholder dogs */}
+                <div className="p-6 flex flex-col items-center text-center">
+                  {/* Avatar */}
                   <div className="mb-4">
                     {isCurrentUser ? (
                       <MascotIcon id={mascotId} level={mascotLevel} size={80} />
@@ -185,7 +194,7 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
                     </div>
                   )}
                 </div>
-              </div>
+              </BorderGlow>
             );
           })}
         </div>
@@ -196,7 +205,7 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
             className="text-xs text-muted-foreground uppercase tracking-widest mb-4"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
-            // cấp_độ_tập_trung
+            cấp độ tập trung
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="flex items-center gap-3">

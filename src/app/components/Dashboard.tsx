@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Play, Plus, X, Flame, Coins } from "lucide-react";
+import { Play, Plus, X, Flame, Coins, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound, LogOut } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
-import { AppMenu, PanelKey } from "./AppMenu";
 import { StatsPage } from "./StatsPage";
 import { RankingPage } from "./RankingPage";
 import { MascotPage } from "./MascotPage";
 import { ShopPage } from "./ShopPage";
 import { ChangePasswordPage } from "./ChangePasswordPage";
 import { MascotIcon } from "./MascotIcon";
+import Dock from "./Dock";
 import {
   listTasks,
   createTask as apiCreateTask,
@@ -17,6 +17,8 @@ import {
   type ApiTask,
   type ShopState,
 } from "../lib/api";
+
+export type PanelKey = "stats" | "ranking" | "mascot" | "shop" | "password";
 
 export function Dashboard({ onLogout, userName }: { onLogout: () => void; userName: string }) {
   const [tasks, setTasks] = useState<ApiTask[]>([]);
@@ -152,19 +154,12 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
               )}
             </div>
             {shop && <MascotIcon id={shop.selectedMascot} level={shop.level} size={32} />}
-            <button
-              onClick={onLogout}
-              className="text-xs px-3 py-2 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Đăng xuất
-            </button>
-            <AppMenu onSelect={setActivePanel} />
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-6 py-12 pb-36">
         {error && (
           <div className="mb-6 flex items-center justify-between gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-4 py-3">
             <span>{error}</span>
@@ -180,7 +175,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
             className="text-xs text-primary uppercase tracking-widest mb-3"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
-            // tổng_thời_gian
+            tổng thời gian
           </div>
           <div
             className="text-6xl lg:text-7xl font-black tabular-nums tracking-tight"
@@ -197,7 +192,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
             className="text-xs text-muted-foreground uppercase tracking-widest mb-4"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
-            // danh_sách_công_việc
+            danh sách công việc
           </div>
 
           {loading && <div className="text-muted-foreground text-sm">Đang tải…</div>}
@@ -261,6 +256,47 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
           </button>
         </div>
       </div>
+
+      {/* Bottom Dock */}
+      <Dock
+        panelHeight={50}
+        baseItemSize={38}
+        magnification={56}
+        distance={180}
+        items={[
+          {
+            icon: <BarChart3 size={16} />,
+            label: "Thống kê",
+            onClick: () => setActivePanel("stats"),
+          },
+          {
+            icon: <Trophy size={16} />,
+            label: "Xếp hạng",
+            onClick: () => setActivePanel("ranking"),
+          },
+          {
+            icon: <Sparkles size={16} />,
+            label: "Studicon",
+            onClick: () => setActivePanel("mascot"),
+          },
+          {
+            icon: <ShoppingBag size={16} />,
+            label: "Cửa hàng",
+            onClick: () => setActivePanel("shop"),
+          },
+          {
+            icon: <KeyRound size={16} />,
+            label: "Đổi mật khẩu",
+            onClick: () => setActivePanel("password"),
+          },
+          {
+            icon: <LogOut size={16} />,
+            label: "Đăng xuất",
+            onClick: onLogout,
+            className: "dock-item--logout",
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -1,0 +1,109 @@
+/* Pulled out of document flow so animated height doesn't push content around */
+.dock-outer {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0 !important;      /* kill the motion-driven height */
+  overflow: visible;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.dock-panel {
+  position: relative;        /* sits inside the fixed outer */
+  bottom: auto;
+  left: auto;
+  transform: none;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: all;
+  width: fit-content;
+  gap: 0.75rem;
+  border-radius: 1.25rem;
+  background-color: rgba(18, 15, 23, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 0.75rem 0.75rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 0.5px rgba(255, 255, 255, 0.05) inset;
+  z-index: 100;
+}
+
+.dock-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 0.5px rgba(255, 255, 255, 0.04) inset;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dock-item:hover {
+  background-color: rgba(255, 78, 0, 0.15);
+  border-color: rgba(255, 78, 0, 0.35);
+  color: #ff4e00;
+}
+
+.dock-item:focus-visible {
+  outline: 2px solid rgba(255, 78, 0, 0.6);
+  outline-offset: 2px;
+}
+
+/* Logout item variant */
+.dock-item.dock-item--logout:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+}
+
+.dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock-label {
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  width: max-content;
+  white-space: pre;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(18, 15, 23, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.01em;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Divider between nav items and logout */
+.dock-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  align-self: center;
+  margin: 0 0.125rem;
+  flex-shrink: 0;
+}

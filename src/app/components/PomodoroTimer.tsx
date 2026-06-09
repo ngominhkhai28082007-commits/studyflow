@@ -15,15 +15,15 @@ const PHASE_LABEL: Record<Phase, string> = {
 };
 
 const PHASE_COLOR: Record<Phase, string> = {
-  work: "#ff4e00",
-  shortBreak: "#3b82f6",
-  longBreak: "#8b5cf6",
+  work: "rgba(255,255,255,0.88)",
+  shortBreak: "#34d399",
+  longBreak: "#a78bfa",
 };
 
 type PomodoroState = {
   phase: Phase;
   secondsLeft: number;
-  completedCycles: number; // 0-3; increments after each short break; resets after long break
+  completedCycles: number;
 };
 
 const INITIAL: PomodoroState = {
@@ -41,7 +41,6 @@ function advanceState(s: PomodoroState): PomodoroState {
   }
   if (s.phase === "shortBreak")
     return { phase: "work", secondsLeft: PHASE_SECONDS.work, completedCycles: s.completedCycles + 1 };
-  // longBreak
   return { phase: "work", secondsLeft: PHASE_SECONDS.work, completedCycles: 0 };
 }
 
@@ -64,16 +63,19 @@ function playBeep() {
 
 interface PomodoroTimerProps {
   onTick: () => void;
+  taskName?: string;
 }
 
-export function PomodoroTimer({ onTick }: PomodoroTimerProps) {
+const RADIUS = 120;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+export function PomodoroTimer({ onTick, taskName }: PomodoroTimerProps) {
   const [s, dispatch] = useReducer(
     (state: PomodoroState, _: { type: "tick" }) => advanceState(state),
     INITIAL
   );
   const prevPhase = useRef<Phase>("work");
 
-  // play beep on every phase transition
   useEffect(() => {
     if (prevPhase.current !== s.phase) {
       playBeep();
@@ -92,55 +94,89 @@ export function PomodoroTimer({ onTick }: PomodoroTimerProps) {
   const color = PHASE_COLOR[s.phase];
   const mins = Math.floor(s.secondsLeft / 60).toString().padStart(2, "0");
   const secs = (s.secondsLeft % 60).toString().padStart(2, "0");
-  const cycleLabel =
-    s.phase === "work"
-      ? `Chu kỳ ${s.completedCycles + 1} / 4`
-      : PHASE_LABEL[s.phase];
+  const progress = s.secondsLeft / PHASE_SECONDS[s.phase];
+  const dashOffset = CIRCUMFERENCE * (1 - progress);
+  const cycleInfo = s.phase === "work"
+    ? `Phiên ${s.completedCycles + 1}/4`
+    : PHASE_LABEL[s.phase];
 
   return (
     <div className="flex flex-col items-center gap-6">
-      {/* Phase badge */}
-      <div
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
-        style={{ backgroundColor: `${color}18`, color, fontFamily: "'JetBrains Mono', monospace" }}
-      >
-        <span
-          className="w-1.5 h-1.5 rounded-full animate-pulse"
-          style={{ backgroundColor: color }}
-        />
-        {PHASE_LABEL[s.phase]}
+      {/* Ring + time */}
+      <div className="relative inline-flex items-center justify-center">
+        <svg width="300" height="300" viewBox="0 0 300 300">
+          {/* Track */}
+          <circle
+            cx="150" cy="150" r={RADIUS}
+            fill="none"
+            stroke="rgba(255,255,255,0.07)"
+            strokeWidth="10"
+          />
+          {/* Progress arc */}
+          <circle
+            cx="150" cy="150" r={RADIUS}
+            fill="none"
+            stroke={color}
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={dashOffset}
+            transform="rotate(-90 150 150)"
+            style={{ transition: "stroke-dashoffset 1s linear, stroke 0.5s ease" }}
+          />
+        </svg>
+
+        {/* Center */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center select-none">
+          <div
+            className="text-6xl font-black tabular-nums leading-none"
+            style={{ fontFamily: "'JetBrains Mono', monospace", color }}
+          >
+            {mins}:{secs}
+          </div>
+          <div
+            className="text-xs font-bold tracking-[0.2em] mt-2"
+            style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.35)" }}
+          >
+            CÒN LẠI
+          </div>
+        </div>
       </div>
 
-      {/* Countdown */}
-      <div
-        className="text-8xl lg:text-9xl font-black tabular-nums tracking-tight"
-        style={{ fontFamily: "'JetBrains Mono', monospace", color }}
-      >
-        {mins}:{secs}
-      </div>
+      {/* Task name */}
+      {taskName && (
+        <div className="text-center">
+          <div
+            className="text-xl font-bold"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            {taskName}
+          </div>
+          <div
+            className="text-sm mt-1 font-medium"
+            style={{ color, fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            {PHASE_LABEL[s.phase]} · {cycleInfo}
+          </div>
+        </div>
+      )}
 
-      {/* Cycle progress dots */}
+      {/* Cycle dots */}
       <div className="flex items-center gap-3">
         {Array.from({ length: 4 }, (_, i) => (
           <div
             key={i}
-            className="w-3 h-3 rounded-full transition-all duration-300"
+            className="w-2.5 h-2.5 rounded-full transition-all duration-300"
             style={{
               backgroundColor:
                 i < s.completedCycles
                   ? color
                   : i === s.completedCycles && s.phase === "work"
-                  ? `${color}60`
+                  ? `${color}70`
                   : "rgba(255,255,255,0.15)",
             }}
           />
         ))}
-        <span
-          className="text-xs text-muted-foreground ml-1"
-          style={{ fontFamily: "'JetBrains Mono', monospace" }}
-        >
-          {cycleLabel}
-        </span>
       </div>
     </div>
   );

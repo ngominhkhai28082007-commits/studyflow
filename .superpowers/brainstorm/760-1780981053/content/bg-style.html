@@ -1,0 +1,316 @@
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0810; color: #fff; font-family: 'Inter', sans-serif; }
+
+  .question-header {
+    text-align: center;
+    padding: 32px 24px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .question-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .question-header p { color: rgba(255,255,255,0.45); font-size: 14px; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 28px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(255,78,0,0.4); transform: translateY(-2px); }
+  .card.selected { border-color: #ff4e00; box-shadow: 0 0 24px rgba(255,78,0,0.25); }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 14px 16px 0;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 16px 12px;
+    color: #fff;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    padding: 0 16px 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── Mini scroll preview strip ─── */
+  .preview {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  /* === Option A: Cinematic gradient shift === */
+  .preview-a {
+    background: linear-gradient(180deg, #0a0810 0%, #0a0810 5%);
+  }
+  .preview-a .layer { position: absolute; width: 100%; }
+  .preview-a .hero-layer {
+    top: 0; height: 80px;
+    background: linear-gradient(180deg, #0d0a18 0%, #110d20 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .preview-a .hero-text {
+    font-size: 13px; font-weight: 900; letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #fff 40%, #ff4e00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .preview-a .stats-layer {
+    top: 70px; height: 50px;
+    background: linear-gradient(180deg, rgba(255,78,0,0.08) 0%, rgba(124,58,237,0.06) 100%);
+    border-top: 1px solid rgba(255,78,0,0.15);
+    display: flex; align-items: center; justify-content: center; gap: 32px;
+  }
+  .preview-a .stat-item { text-align:center; }
+  .preview-a .stat-v { font-size:11px; font-weight:900; color:#ff6b2b; }
+  .preview-a .stat-l { font-size:8px; color:rgba(255,255,255,0.35); }
+  .preview-a .features-layer {
+    top: 110px; height: 80px;
+    background: linear-gradient(180deg, rgba(124,58,237,0.1) 0%, rgba(30,20,60,0.6) 100%);
+    border-top: 1px solid rgba(124,58,237,0.15);
+    display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px;
+  }
+  .preview-a .feat-card {
+    flex:1; height:56px; border-radius:8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(124,58,237,0.2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:7px; color:rgba(255,255,255,0.4); letter-spacing:0.05em;
+  }
+  .preview-a .leaderboard-layer {
+    top: 180px; height: 60px;
+    background: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, rgba(10,8,16,0.9) 100%);
+    border-top: 1px solid rgba(16,185,129,0.15);
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; color:rgba(16,185,129,0.6); font-weight:700; letter-spacing:0.1em;
+  }
+  .preview-a .auth-layer {
+    top: 230px; height: 40px;
+    background: linear-gradient(180deg, rgba(255,78,0,0.05) 0%, rgba(10,8,16,1) 100%);
+    border-top: 1px solid rgba(255,78,0,0.1);
+    display:flex; align-items:center; justify-content:center;
+    font-size:8px; color:rgba(255,78,0,0.5); letter-spacing:0.08em;
+  }
+  /* fade connectors */
+  .preview-a .fade {
+    position:absolute; left:0; right:0; height:20px; pointer-events:none;
+    background: linear-gradient(180deg, transparent, rgba(10,8,16,0.4), transparent);
+  }
+
+  /* === Option B: Single aurora that morphs === */
+  .preview-b { background: #07060f; }
+  .preview-b .aurora {
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 120% 60% at 30% 15%, rgba(255,78,0,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 80% at 70% 50%, rgba(124,58,237,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 50% at 20% 80%, rgba(16,185,129,0.1) 0%, transparent 55%);
+  }
+  .preview-b .grid-lines {
+    position:absolute; inset:0;
+    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .preview-b .section-label {
+    position:absolute; left:16px; font-size:8px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase;
+  }
+  .preview-b .s1 { top:16px; color:rgba(255,78,0,0.7); }
+  .preview-b .s2 { top:76px; color:rgba(255,78,0,0.5); }
+  .preview-b .s3 { top:126px; color:rgba(124,58,237,0.7); }
+  .preview-b .s4 { top:186px; color:rgba(16,185,129,0.6); }
+  .preview-b .s5 { top:228px; color:rgba(255,78,0,0.4); }
+  .preview-b .divider {
+    position:absolute; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 20%, rgba(255,255,255,0.06) 80%, transparent);
+  }
+  .preview-b .d1 { top:70px; }
+  .preview-b .d2 { top:120px; }
+  .preview-b .d3 { top:180px; }
+  .preview-b .d4 { top:222px; }
+  .preview-b .hero-content {
+    position:absolute; top:20px; left:0; right:0;
+    text-align:center;
+    font-size:14px; font-weight:900; letter-spacing:-0.01em;
+    background: linear-gradient(135deg, #fff 40%, #ff6b35);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .preview-b .blur-top {
+    position:absolute; left:0; right:0; height:30px; pointer-events:none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    mask-image: linear-gradient(180deg, transparent 0%, black 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 100%);
+  }
+  .preview-b .bt1 { top:70px; }
+  .preview-b .bt2 { top:120px; }
+  .preview-b .bt3 { top:180px; }
+
+  /* === Option C: Deep space layers with floating orbs === */
+  .preview-c { background: #060510; }
+  .preview-c .base {
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 200% 40% at 50% 10%, rgba(255,78,0,0.12) 0%, transparent 50%);
+  }
+  /* orbs */
+  .preview-c .orb {
+    position:absolute; border-radius:50%;
+    filter: blur(30px); opacity: 0.4;
+    pointer-events:none;
+  }
+  .preview-c .orb-1 { width:120px; height:80px; top:-10px; left:20%; background:rgba(255,78,0,0.5); }
+  .preview-c .orb-2 { width:80px; height:60px; top:80px; right:15%; background:rgba(124,58,237,0.6); }
+  .preview-c .orb-3 { width:100px; height:60px; top:150px; left:10%; background:rgba(16,185,129,0.4); }
+  .preview-c .orb-4 { width:60px; height:60px; top:210px; right:25%; background:rgba(255,78,0,0.3); }
+  /* noise */
+  .preview-c .noise {
+    position:absolute; inset:0; opacity:0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+  /* section separators — glass morphic strips */
+  .preview-c .glass-strip {
+    position:absolute; left:12px; right:12px; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 30%, rgba(255,255,255,0.15) 70%, transparent);
+  }
+  .preview-c .gs1 { top:68px; }
+  .preview-c .gs2 { top:118px; }
+  .preview-c .gs3 { top:178px; }
+  .preview-c .gs4 { top:220px; }
+  .preview-c .section-tag {
+    position:absolute; right:16px;
+    font-size:7px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+    color:rgba(255,255,255,0.2);
+  }
+  .preview-c .t1 { top:8px; }
+  .preview-c .t2 { top:76px; }
+  .preview-c .t3 { top:126px; }
+  .preview-c .t4 { top:186px; }
+  .preview-c .hero-c {
+    position:absolute; top:18px; left:0; right:0;
+    text-align:center; font-size:13px; font-weight:900;
+    background: linear-gradient(135deg, #ffffff 50%, #ff6b35);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .preview-c .stat-c {
+    position:absolute; top:80px; left:0; right:0;
+    display:flex; justify-content:center; gap:16px;
+  }
+  .preview-c .sc-item { text-align:center; }
+  .preview-c .sc-v { font-size:10px; font-weight:900; color:#ff6b2b; }
+  .preview-c .sc-l { font-size:6.5px; color:rgba(255,255,255,0.3); }
+
+  /* bottom info */
+  .hint {
+    text-align:center;
+    padding: 16px 24px 24px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+  }
+</style>
+
+<div class="question-header">
+  <h2>Background layer style là gì?</h2>
+  <p>Mỗi option là 1 mini-preview thu nhỏ toàn bộ landing page — từ Hero → Stats → Features → Leaderboard → Đăng ký</p>
+</div>
+
+<div class="cards-grid">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-label">Option A</div>
+    <div class="card-title">Chromatic Shift</div>
+    <div class="preview preview-a">
+      <div class="layer hero-layer">
+        <div class="hero-text">Học tập. Tập trung. Chinh phục.</div>
+      </div>
+      <div class="layer stats-layer">
+        <div class="stat-item"><div class="stat-v">48K+</div><div class="stat-l">Học viên</div></div>
+        <div class="stat-item"><div class="stat-v">2.4M</div><div class="stat-l">Phiên học</div></div>
+        <div class="stat-item"><div class="stat-v">96%</div><div class="stat-l">Hài lòng</div></div>
+      </div>
+      <div class="layer features-layer">
+        <div class="feat-card">TIMER</div>
+        <div class="feat-card">NHÓM</div>
+        <div class="feat-card">STREAK</div>
+        <div class="feat-card">RANK</div>
+      </div>
+      <div class="layer leaderboard-layer">LEADERBOARD</div>
+      <div class="layer auth-layer">ĐĂNG KÝ</div>
+    </div>
+    <div class="card-desc">Mỗi section có accent màu riêng (cam → tím → xanh lá → cam), chuyển nhau bằng gradient fade. Sang trọng, rõ phân vùng.</div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-label">Option B</div>
+    <div class="card-title">Aurora Flow</div>
+    <div class="preview preview-b">
+      <div class="aurora"></div>
+      <div class="grid-lines"></div>
+      <div class="blur-top bt1"></div>
+      <div class="blur-top bt2"></div>
+      <div class="blur-top bt3"></div>
+      <div class="divider d1"></div>
+      <div class="divider d2"></div>
+      <div class="divider d3"></div>
+      <div class="divider d4"></div>
+      <div class="hero-content">Học tập. Tập trung. Chinh phục.</div>
+      <div class="section-label s1">HERO</div>
+      <div class="section-label s2">STATS</div>
+      <div class="section-label s3">FEATURES</div>
+      <div class="section-label s4">LEADERBOARD</div>
+      <div class="section-label s5">AUTH</div>
+    </div>
+    <div class="card-desc">Một aurora background duy nhất trải dài toàn trang, màu sắc tự nhiên trôi theo vị trí. Blur nhẹ ở đầu mỗi section. Liền mạch, ít bị chia cắt.</div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-label">Option C</div>
+    <div class="card-title">Deep Space Orbs</div>
+    <div class="preview preview-c">
+      <div class="base"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="orb orb-4"></div>
+      <div class="noise"></div>
+      <div class="glass-strip gs1"></div>
+      <div class="glass-strip gs2"></div>
+      <div class="glass-strip gs3"></div>
+      <div class="glass-strip gs4"></div>
+      <div class="section-tag t1">HERO</div>
+      <div class="section-tag t2">STATS</div>
+      <div class="section-tag t3">FEATURES</div>
+      <div class="section-tag t4">LEADERBOARD</div>
+      <div class="hero-c">Học tập. Tập trung. Chinh phục.</div>
+      <div class="stat-c">
+        <div class="sc-item"><div class="sc-v">48K+</div><div class="sc-l">Học viên</div></div>
+        <div class="sc-item"><div class="sc-v">2.4M</div><div class="sc-l">Phiên học</div></div>
+        <div class="sc-item"><div class="sc-v">96%</div><div class="sc-l">Hài lòng</div></div>
+      </div>
+    </div>
+    <div class="card-desc">Floating ambient orbs (blur lớn) neo vào từng section, fade in/out khi scroll. Nền tối nhất, texture noise nhẹ. Premium, cinematic.</div>
+  </div>
+
+</div>
+
+<div class="hint">Click vào option bạn thích → sau đó trả lời trong terminal</div>

@@ -5,7 +5,10 @@
       "mcp__mcp-registry__search_mcp_registry",
       "Bash(gh api *)",
       "Read(//c/Users/Ngo Minh Khai/**)",
-      "Bash(npx uipro-cli *)"
+      "Bash(npx uipro-cli *)",
+      "Bash(curl -s http://localhost:4000/api/auth/me)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :4000)"
     ]
   }
 }

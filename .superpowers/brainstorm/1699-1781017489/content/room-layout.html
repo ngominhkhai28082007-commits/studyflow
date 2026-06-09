@@ -1,0 +1,148 @@
+<h2>Bố cục phòng học — chọn layout bạn thích</h2>
+<p class="subtitle">Cả 3 đều có: danh sách phòng → vào phòng → thấy người học cùng + chat</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d0d1a;border-radius:8px;padding:12px;font-size:11px;color:#aaa;min-height:200px">
+        <div style="display:flex;gap:8px;height:180px">
+          <!-- Left: user grid -->
+          <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start">
+            <div style="background:#1a1a2e;border-radius:6px;padding:8px;text-align:center">
+              <div style="width:32px;height:32px;background:#333;border-radius:50%;margin:0 auto 4px"></div>
+              <div style="font-size:9px;color:#fff">Minh Khoa</div>
+              <div style="font-size:8px;color:#60a5fa;margin-top:2px">01:23:45</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:8px;text-align:center;border:1px solid #ff4e0040">
+              <div style="width:32px;height:32px;background:#ff4e0030;border-radius:50%;margin:0 auto 4px"></div>
+              <div style="font-size:9px;color:#fff">Bạn</div>
+              <div style="font-size:8px;color:#60a5fa;margin-top:2px">00:45:12</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:8px;text-align:center">
+              <div style="width:32px;height:32px;background:#333;border-radius:50%;margin:0 auto 4px"></div>
+              <div style="font-size:9px;color:#fff">Thu Lan</div>
+              <div style="font-size:8px;color:#60a5fa;margin-top:2px">02:10:00</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:8px;text-align:center">
+              <div style="width:32px;height:32px;background:#333;border-radius:50%;margin:0 auto 4px"></div>
+              <div style="font-size:9px;color:#fff">Hoàng Đức</div>
+              <div style="font-size:8px;color:#60a5fa;margin-top:2px">00:08:30</div>
+            </div>
+          </div>
+          <!-- Right: chat -->
+          <div style="width:110px;background:#111;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:8px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Chat</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#60a5fa">Minh:</span> cố lên 💪</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#a78bfa">Lan:</span> đang ôn thi</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#ff4e00">Bạn:</span> 👍</div>
+            <div style="flex:1"></div>
+            <div style="background:#1a1a2e;border-radius:4px;padding:4px 6px;font-size:8px;color:#555">Nhắn tin...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Grid + Chat bên phải</h3>
+      <p>Lưới người dùng chiếm phần lớn màn hình, chat dọc bên phải. Quen thuộc, dễ nhìn.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d0d1a;border-radius:8px;padding:12px;font-size:11px;color:#aaa;min-height:200px">
+        <div style="height:180px;display:flex;flex-direction:column;gap:6px">
+          <!-- Top: timer (focus) -->
+          <div style="background:#111;border-radius:6px;padding:8px;text-align:center;flex-shrink:0">
+            <div style="font-size:14px;font-weight:bold;color:#f1f5f9;font-family:monospace">18:45</div>
+            <div style="font-size:8px;color:#666">CÒN LẠI</div>
+          </div>
+          <!-- Middle: users horizontal scroll -->
+          <div style="display:flex;gap:6px;overflow:hidden;flex-shrink:0">
+            <div style="background:#1a1a2e;border-radius:6px;padding:6px;text-align:center;min-width:60px">
+              <div style="width:24px;height:24px;background:#333;border-radius:50%;margin:0 auto 3px"></div>
+              <div style="font-size:8px;color:#fff">Minh</div>
+              <div style="font-size:7px;color:#60a5fa">01:23</div>
+            </div>
+            <div style="background:#1a1a2e;border:1px solid #ff4e0040;border-radius:6px;padding:6px;text-align:center;min-width:60px">
+              <div style="width:24px;height:24px;background:#ff4e0030;border-radius:50%;margin:0 auto 3px"></div>
+              <div style="font-size:8px;color:#fff">Bạn</div>
+              <div style="font-size:7px;color:#60a5fa">00:45</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:6px;text-align:center;min-width:60px">
+              <div style="width:24px;height:24px;background:#333;border-radius:50%;margin:0 auto 3px"></div>
+              <div style="font-size:8px;color:#fff">Lan</div>
+              <div style="font-size:7px;color:#60a5fa">02:10</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:6px;text-align:center;min-width:60px">
+              <div style="width:24px;height:24px;background:#333;border-radius:50%;margin:0 auto 3px"></div>
+              <div style="font-size:8px;color:#fff">Đức</div>
+              <div style="font-size:7px;color:#60a5fa">00:08</div>
+            </div>
+          </div>
+          <!-- Bottom: chat -->
+          <div style="flex:1;background:#111;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:3px">
+            <div style="font-size:8px;color:#aaa"><span style="color:#60a5fa">Minh:</span> cố lên 💪</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#a78bfa">Lan:</span> đang ôn thi</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#ff4e00">Bạn:</span> 👍</div>
+            <div style="flex:1"></div>
+            <div style="background:#1a1a2e;border-radius:4px;padding:4px 6px;font-size:8px;color:#555">Nhắn tin...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Timer lớn + Users ngang + Chat</h3>
+      <p>Timer Pomodoro nổi bật trên cùng, users cuộn ngang, chat chiếm phần còn lại. Focus vào việc học.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d0d1a;border-radius:8px;padding:12px;font-size:11px;color:#aaa;min-height:200px">
+        <div style="display:flex;gap:8px;height:180px">
+          <!-- Left: chat -->
+          <div style="width:100px;background:#111;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:8px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Chat</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#60a5fa">Minh:</span> cố lên 💪</div>
+            <div style="font-size:8px;color:#aaa"><span style="color:#a78bfa">Lan:</span> 😤</div>
+            <div style="flex:1"></div>
+            <div style="background:#1a1a2e;border-radius:4px;padding:4px 6px;font-size:8px;color:#555">Nhắn tin...</div>
+          </div>
+          <!-- Right: timer + users -->
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div style="background:#111;border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:14px;font-weight:bold;color:#f1f5f9;font-family:monospace">18:45</div>
+              <div style="font-size:8px;color:#666">CÒN LẠI</div>
+            </div>
+            <div style="flex:1;background:#1a1a2e;border-radius:6px;padding:8px">
+              <div style="font-size:8px;color:#666;margin-bottom:6px">4 người đang học</div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:18px;height:18px;background:#333;border-radius:50%;flex-shrink:0"></div>
+                  <span style="font-size:8px;color:#fff;flex:1">Minh Khoa</span>
+                  <span style="font-size:8px;color:#60a5fa;font-family:monospace">01:23</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:18px;height:18px;background:#ff4e0030;border-radius:50%;flex-shrink:0"></div>
+                  <span style="font-size:8px;color:#fff;flex:1">Bạn</span>
+                  <span style="font-size:8px;color:#60a5fa;font-family:monospace">00:45</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:18px;height:18px;background:#333;border-radius:50%;flex-shrink:0"></div>
+                  <span style="font-size:8px;color:#fff;flex:1">Thu Lan</span>
+                  <span style="font-size:8px;color:#60a5fa;font-family:monospace">02:10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Chat trái + Timer + Danh sách dọc</h3>
+      <p>Chat nổi bật bên trái, danh sách người dùng dạng list nhỏ gọn. Phù hợp khi phòng đông người.</p>
+    </div>
+  </div>
+
+</div>

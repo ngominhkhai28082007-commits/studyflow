@@ -118,16 +118,8 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
       {/* Room Content */}
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs mb-8"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Đang tập trung: {taskName}
-          </div>
-
           <div className="mb-10">
-            <PomodoroTimer onTick={handleTick} />
+            <PomodoroTimer onTick={handleTick} taskName={taskName} />
           </div>
 
           <h1
@@ -158,10 +150,10 @@ export function FocusRoom({ taskName, onExit, mascotId, mascotLevel }: FocusRoom
                 glowIntensity={isCurrentUser ? 1.2 : 0.9}
                 colors={
                   isCurrentUser
-                    ? ['#ff4e00', '#ff8c00', '#ffd700']
+                    ? ['#60a5fa', '#38bdf8', '#818cf8']
                     : ['#c084fc', '#f472b6', '#38bdf8']
                 }
-                glowColor={isCurrentUser ? '20 100 60' : '270 80 75'}
+                glowColor={isCurrentUser ? '210 80 70' : '270 80 75'}
                 className="transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="p-6 flex flex-col items-center text-center">

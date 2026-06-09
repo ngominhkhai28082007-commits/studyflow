@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Plus, X, Flame, Coins, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound, LogOut } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
 import { StatsPage } from "./StatsPage";
@@ -30,9 +30,17 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
   const [shop, setShop] = useState<ShopState | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const todayVN = () => {
+    const shifted = new Date(Date.now() + 7 * 60 * 60_000);
+    return shifted.toISOString().slice(0, 10);
+  };
+
+  const loadedDateRef = useRef<string>(todayVN());
+
   const refreshTasks = async () => {
     const data = await listTasks();
     setTasks(data);
+    loadedDateRef.current = todayVN();
   };
 
   const refreshShop = () => {
@@ -44,6 +52,16 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
       .catch((e) => setError(e instanceof Error ? e.message : "Không tải được danh sách công việc"))
       .finally(() => setLoading(false));
     refreshShop();
+  }, []);
+
+  // Tự động reset khi qua ngày mới (kiểm tra mỗi phút)
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (todayVN() !== loadedDateRef.current) {
+        refreshTasks().catch(() => {});
+      }
+    }, 60_000);
+    return () => clearInterval(id);
   }, []);
 
   const totalTime = tasks.reduce((sum, t) => sum + t.todaySeconds, 0);

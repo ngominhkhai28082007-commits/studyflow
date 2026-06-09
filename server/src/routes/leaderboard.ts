@@ -7,7 +7,7 @@ import { round1, computeStreak, levelFromHours, abbrFromName } from "../lib/stat
 
 export const leaderboardRouter = Router();
 
-const TOP_N = 10;
+const TOP_N = 50;
 
 leaderboardRouter.get("/", optionalAuth, asyncHandler(async (req, res) => {
   const now = new Date();

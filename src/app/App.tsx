@@ -158,8 +158,8 @@ export default function App() {
 
   const { ref: heroRef,     visible: heroVisible     } = useInViewAccent(0.10);
   const { ref: statsRef,    visible: statsVisible    } = useInViewAccent(0.15);
-  const { ref: featuresRef, visible: featuresVisible } = useInViewAccent(0.10);
-  const { ref: lbRef,       visible: lbVisible       } = useInViewAccent(0.10);
+  const { ref: featuresRef } = useInViewAccent(0.10);
+  const { ref: lbRef       } = useInViewAccent(0.10);
   const { ref: authRef,     visible: authVisible     } = useInViewAccent(0.15);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -411,16 +411,10 @@ export default function App() {
       <GlassSeparator color="purple" />
 
       {/* FEATURES */}
-      <div ref={featuresRef} style={{ position: 'relative' }}>
-        <SectionAccent gradient={SECTION_GRADIENTS.features} visible={featuresVisible} />
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: 40,
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
-          maskImage: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)',
-          zIndex: 1, pointerEvents: 'none',
-        }} />
+      <div ref={featuresRef} style={{
+        position: 'relative',
+        background: 'radial-gradient(ellipse 120% 80% at 50% 50%, rgba(124,58,237,0.22) 0%, rgba(124,58,237,0.08) 50%, transparent 72%)',
+      }}>
         <section id="features" className="py-24 px-6 max-w-7xl mx-auto" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
@@ -489,8 +483,10 @@ export default function App() {
       <GlassSeparator color="green" />
 
       {/* LEADERBOARD */}
-      <div ref={lbRef} style={{ position: 'relative' }}>
-        <SectionAccent gradient={SECTION_GRADIENTS.leaderboard} visible={lbVisible} />
+      <div ref={lbRef} style={{
+        position: 'relative',
+        background: 'radial-gradient(ellipse 100% 70% at 50% 50%, rgba(16,185,129,0.18) 0%, rgba(16,185,129,0.06) 55%, transparent 72%)',
+      }}>
         <section id="leaderboard" className="py-24 px-6 border-y border-border" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}

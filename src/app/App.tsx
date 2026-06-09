@@ -265,7 +265,9 @@ export default function App() {
       </nav>
 
       {/* HERO */}
-      <section className="pt-32 pb-24 px-6">
+      <div ref={heroRef} style={{ position: 'relative' }}>
+        <SectionAccent gradient={SECTION_GRADIENTS.hero} visible={heroVisible} />
+        <section className="pt-32 pb-24 px-6" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
           variants={containerVariant}
@@ -320,9 +322,14 @@ export default function App() {
           </motion.div>
         </motion.div>
       </section>
+      </div>{/* end hero wrapper */}
+
+      <GlassSeparator color="orange" />
 
       {/* STATS BAR */}
-      <section className="py-12 border-y border-border" style={{ background: "rgba(16,16,28,0.6)" }}>
+      <div ref={statsRef} style={{ position: 'relative' }}>
+        <SectionAccent gradient={SECTION_GRADIENTS.stats} visible={statsVisible} />
+        <section className="py-12 border-y border-border" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
           variants={containerVariant}
@@ -341,9 +348,22 @@ export default function App() {
           ))}
         </motion.div>
       </section>
+      </div>{/* end stats wrapper */}
+
+      <GlassSeparator color="purple" />
 
       {/* FEATURES */}
-      <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
+      <div ref={featuresRef} style={{ position: 'relative' }}>
+        <SectionAccent gradient={SECTION_GRADIENTS.features} visible={featuresVisible} />
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 40,
+          backdropFilter: 'blur(6px)',
+          WebkitBackdropFilter: 'blur(6px)',
+          maskImage: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)',
+          zIndex: 1, pointerEvents: 'none',
+        }} />
+        <section id="features" className="py-24 px-6 max-w-7xl mx-auto" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
           variants={fadeUpVariant}
@@ -402,9 +422,14 @@ export default function App() {
           ))}
         </motion.div>
       </section>
+      </div>{/* end features wrapper */}
+
+      <GlassSeparator color="green" />
 
       {/* LEADERBOARD */}
-      <section id="leaderboard" className="py-24 px-6 border-y border-border" style={{ background: "rgba(16,16,28,0.4)" }}>
+      <div ref={lbRef} style={{ position: 'relative' }}>
+        <SectionAccent gradient={SECTION_GRADIENTS.leaderboard} visible={lbVisible} />
+        <section id="leaderboard" className="py-24 px-6 border-y border-border" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
           variants={containerVariant}
@@ -486,9 +511,14 @@ export default function App() {
             </motion.div>
         </motion.div>
       </section>
+      </div>{/* end leaderboard wrapper */}
+
+      <GlassSeparator color="orange" />
 
       {/* AUTH */}
-      <section id="auth" className="py-24 px-6">
+      <div ref={authRef} style={{ position: 'relative' }}>
+        <SectionAccent gradient={SECTION_GRADIENTS.auth} visible={authVisible} />
+        <section id="auth" className="py-24 px-6" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
           variants={fadeUpVariant}
@@ -652,6 +682,7 @@ export default function App() {
           </div>
         </motion.div>
       </section>
+      </div>{/* end auth wrapper */}
 
       {/* FOOTER */}
       <footer className="border-t border-border py-10 px-6">

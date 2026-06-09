@@ -10,5 +10,6 @@ export default defineConfig({
     // sẽ khiến file này xoá/đăng ký dữ liệu của file kia (P2002/P2003).
     // Tắt chạy song song để các file test chạy tuần tự, cô lập lẫn nhau.
     fileParallelism: false,
+    exclude: ["dist/**", "node_modules/**"],
   },
 });

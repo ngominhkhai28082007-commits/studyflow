@@ -144,6 +144,18 @@ export function useRoom() {
 
   const tick = useCallback(() => {
     getSocket().emit("timer:tick");
+    // Server broadcasts timer:update to others only (socket.to), not back to sender.
+    // Update own sessionSeconds locally so the current user sees their own counter tick.
+    setState((prev) => {
+      if (prev.status !== "in_room") return prev;
+      const myId = mySocketIdRef.current;
+      return {
+        ...prev,
+        members: prev.members.map((m) =>
+          m.socketId === myId ? { ...m, sessionSeconds: m.sessionSeconds + 1 } : m
+        ),
+      };
+    });
   }, []);
 
   const clearError = useCallback(() => {

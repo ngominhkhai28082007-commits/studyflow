@@ -47,9 +47,9 @@ function SectionAccent({ gradient, visible }: { gradient: string; visible: boole
 }
 
 const SEP_COLORS = {
-  orange: { bar: 'rgba(255,78,0,0.3)',     dot: '#ff4e00', glow: 'rgba(255,78,0,0.5)'    },
-  purple: { bar: 'rgba(124,58,237,0.3)',   dot: '#7c3aed', glow: 'rgba(124,58,237,0.5)'  },
-  green:  { bar: 'rgba(16,185,129,0.3)',   dot: '#10b981', glow: 'rgba(16,185,129,0.5)'  },
+  orange: { bar: 'rgba(255,78,0,0.3)',     dot: '#ff4e00', glow: 'rgba(255,78,0,0.5)',    glowDim: 'rgba(255,78,0,0.2)'    },
+  purple: { bar: 'rgba(124,58,237,0.3)',   dot: '#7c3aed', glow: 'rgba(124,58,237,0.5)',  glowDim: 'rgba(124,58,237,0.2)'  },
+  green:  { bar: 'rgba(16,185,129,0.3)',   dot: '#10b981', glow: 'rgba(16,185,129,0.5)',  glowDim: 'rgba(16,185,129,0.2)'  },
 } as const;
 type SepColor = keyof typeof SEP_COLORS;
 
@@ -69,7 +69,7 @@ function GlassSeparator({ color }: { color: SepColor }) {
         position: 'relative', zIndex: 2,
         width: 6, height: 6, borderRadius: '50%',
         background: c.dot,
-        boxShadow: `0 0 10px 4px ${c.glow}, 0 0 24px 8px ${c.glow.replace('0.5', '0.2')}`,
+        boxShadow: `0 0 10px 4px ${c.glow}, 0 0 24px 8px ${c.glowDim}`,
       }} />
     </div>
   );

@@ -75,11 +75,11 @@ function GlassSeparator({ color }: { color: SepColor }) {
 }
 
 const SECTION_GRADIENTS = {
-  hero:        'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,78,0,0.07) 0%, transparent 70%)',
-  stats:       'linear-gradient(180deg, rgba(255,78,0,0.05) 0%, rgba(124,58,237,0.04) 60%, rgba(124,58,237,0.06) 100%)',
-  features:    'radial-gradient(ellipse 110% 90% at 50% 50%, rgba(124,58,237,0.10) 0%, rgba(124,58,237,0.04) 50%, transparent 75%), linear-gradient(180deg, rgba(124,58,237,0.05) 0%, transparent 100%)',
-  leaderboard: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(16,185,129,0.09) 0%, rgba(16,185,129,0.03) 55%, transparent 75%), linear-gradient(180deg, rgba(16,185,129,0.04) 0%, transparent 100%)',
-  auth:        'radial-gradient(ellipse 70% 80% at 50% 60%, rgba(255,78,0,0.06) 0%, transparent 60%)',
+  hero:        'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,78,0,0.10) 0%, transparent 70%)',
+  stats:       'linear-gradient(180deg, rgba(255,78,0,0.07) 0%, rgba(124,58,237,0.05) 60%, rgba(124,58,237,0.09) 100%)',
+  features:    'radial-gradient(ellipse 110% 90% at 50% 50%, rgba(124,58,237,0.16) 0%, rgba(124,58,237,0.06) 50%, transparent 75%), linear-gradient(180deg, rgba(124,58,237,0.08) 0%, transparent 100%)',
+  leaderboard: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(16,185,129,0.14) 0%, rgba(16,185,129,0.05) 55%, transparent 75%), linear-gradient(180deg, rgba(16,185,129,0.07) 0%, transparent 100%)',
+  auth:        'radial-gradient(ellipse 70% 80% at 50% 60%, rgba(255,78,0,0.09) 0%, transparent 60%)',
 };
 
 export default function App() {
@@ -203,8 +203,8 @@ export default function App() {
         fontFamily: "'DM Sans', sans-serif",
         position: 'relative',
         backgroundImage: [
-          'radial-gradient(ellipse 70% 55% at 65% 18%, rgba(255,78,0,0.17) 0%, transparent 65%)',
-          'radial-gradient(ellipse 45% 35% at 25% 35%, rgba(255,100,0,0.06) 0%, transparent 55%)',
+          'radial-gradient(ellipse 70% 55% at 65% 18%, rgba(255,78,0,0.22) 0%, transparent 65%)',
+          'radial-gradient(ellipse 45% 35% at 25% 35%, rgba(255,100,0,0.08) 0%, transparent 55%)',
         ].join(', '),
         backgroundSize: '100% 100vh',
         backgroundRepeat: 'no-repeat',

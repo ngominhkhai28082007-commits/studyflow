@@ -157,6 +157,12 @@ export default function App() {
 
   const rankEmoji = ["🥇", "🥈", "🥉"];
 
+  const { ref: heroRef,     visible: heroVisible     } = useInViewAccent(0.10);
+  const { ref: statsRef,    visible: statsVisible    } = useInViewAccent(0.15);
+  const { ref: featuresRef, visible: featuresVisible } = useInViewAccent(0.10);
+  const { ref: lbRef,       visible: lbVisible       } = useInViewAccent(0.10);
+  const { ref: authRef,     visible: authVisible     } = useInViewAccent(0.15);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);

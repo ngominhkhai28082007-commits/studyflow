@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Timer, Users, Flame, Trophy, ChevronRight, Eye, EyeOff, BookOpen, Zap } from "lucide-react";
 import { Dashboard } from "./components/Dashboard";
 import { register as apiRegister, login as apiLogin, fetchMe, logout as apiLogout, getToken, type PublicUser, getLeaderboard, type ApiRankUser } from "./lib/api";
 import LightPillar from "./components/LightPillar";
 import ElectricBorder from "./components/ElectricBorder";
+import AnimatedList from "./components/AnimatedList";
 import { motion } from "motion/react";
 
 const fadeUpVariant = {
@@ -14,6 +15,72 @@ const fadeUpVariant = {
 const containerVariant = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+// ── Scroll-accent infrastructure ─────────────────────────────────────────────
+
+function useInViewAccent(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+function SectionAccent({ gradient, visible }: { gradient: string; visible: boolean }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+      background: gradient,
+      opacity: visible ? 1 : 0,
+      transition: 'opacity 550ms ease-out',
+    }} />
+  );
+}
+
+const SEP_COLORS = {
+  orange: { bar: 'rgba(255,78,0,0.3)',     dot: '#ff4e00', glow: 'rgba(255,78,0,0.5)'    },
+  purple: { bar: 'rgba(124,58,237,0.3)',   dot: '#7c3aed', glow: 'rgba(124,58,237,0.5)'  },
+  green:  { bar: 'rgba(16,185,129,0.3)',   dot: '#10b981', glow: 'rgba(16,185,129,0.5)'  },
+} as const;
+type SepColor = keyof typeof SEP_COLORS;
+
+function GlassSeparator({ color }: { color: SepColor }) {
+  const c = SEP_COLORS[color];
+  return (
+    <div style={{ position: 'relative', height: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
+      {/* frosted bar */}
+      <div style={{
+        position: 'absolute', left: 0, right: 0, top: 6, height: 1,
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        background: `linear-gradient(90deg, transparent 0%, ${c.bar} 20%, ${c.bar} 80%, transparent 100%)`,
+      }} />
+      {/* accent dot */}
+      <div style={{
+        position: 'relative', zIndex: 2,
+        width: 6, height: 6, borderRadius: '50%',
+        background: c.dot,
+        boxShadow: `0 0 10px 4px ${c.glow}, 0 0 24px 8px ${c.glow.replace('0.5', '0.2')}`,
+      }} />
+    </div>
+  );
+}
+
+const SECTION_GRADIENTS = {
+  hero:        'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,78,0,0.09) 0%, transparent 70%)',
+  stats:       'linear-gradient(180deg, rgba(255,78,0,0.07) 0%, rgba(124,58,237,0.05) 60%, rgba(124,58,237,0.08) 100%)',
+  features:    'radial-gradient(ellipse 100% 80% at 50% 50%, rgba(124,58,237,0.10) 0%, transparent 70%), linear-gradient(180deg, rgba(124,58,237,0.06) 0%, transparent 100%)',
+  leaderboard: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(16,185,129,0.09) 0%, transparent 65%), linear-gradient(180deg, rgba(16,185,129,0.05) 0%, transparent 100%)',
+  auth:        'radial-gradient(ellipse 70% 80% at 50% 60%, rgba(255,78,0,0.08) 0%, transparent 60%)',
 };
 
 export default function App() {
@@ -77,7 +144,7 @@ export default function App() {
   const [leaderboard, setLeaderboard] = useState<ApiRankUser[]>([]);
   useEffect(() => {
     getLeaderboard()
-      .then((rows) => setLeaderboard(rows.slice(0, 5)))
+      .then((rows) => setLeaderboard(rows.slice(0, 50)))
       .catch(() => setLeaderboard([]));
   }, []);
 
@@ -280,7 +347,7 @@ export default function App() {
             className="text-xs text-primary uppercase tracking-widest mb-4"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
-            // tính_năng
+            Tính năng
           </div>
           <h2
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
@@ -342,7 +409,7 @@ export default function App() {
               className="text-xs text-primary uppercase tracking-widest mb-4"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
-              // leaderboard
+              Leaderboard
             </div>
             <h2
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
@@ -372,41 +439,44 @@ export default function App() {
               </span>
             </div>
 
-            {leaderboard.map((u, i) => (
-              <div
-                key={u.rank}
-                className={`px-6 py-4 flex items-center gap-4 hover:bg-primary/5 transition-colors ${i < leaderboard.length - 1 ? "border-b border-border" : ""}`}
-              >
+            <AnimatedList
+              items={leaderboard}
+              displayScrollbar={false}
+              renderItem={(u, i, isSelected) => (
                 <div
-                  className="w-7 text-center font-bold text-sm"
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    color: u.rank <= 3 ? "#ff4e00" : "#8888aa",
-                  }}
+                  className={`px-6 py-4 flex items-center gap-4 transition-colors ${isSelected ? "bg-primary/10" : "hover:bg-primary/5"} ${i < leaderboard.length - 1 ? "border-b border-border" : ""}`}
                 >
-                  {u.rank <= 3 ? rankEmoji[u.rank - 1] : u.rank}
-                </div>
+                  <div
+                    className="w-7 text-center font-bold text-sm"
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      color: u.rank <= 3 ? "#ff4e00" : "#8888aa",
+                    }}
+                  >
+                    {u.rank <= 3 ? rankEmoji[u.rank - 1] : u.rank}
+                  </div>
 
-                <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  {u.abbr}
-                </div>
+                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    {u.abbr}
+                  </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm truncate">{u.name}</div>
-                  <div className="text-xs text-muted-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    🔥 {u.streak} ngày
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm truncate">{u.name}</div>
+                    <div className="text-xs text-muted-foreground" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      🔥 {u.streak} ngày
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <div className="font-bold text-sm tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      {u.hours}h
+                    </div>
+                    <div className="text-xs text-muted-foreground">tuần này</div>
                   </div>
                 </div>
-
-                <div className="text-right">
-                  <div className="font-bold text-sm tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    {u.hours}h
-                  </div>
-                  <div className="text-xs text-muted-foreground">tuần này</div>
-                </div>
-              </div>
-            ))}
+              )}
+            />
             </motion.div>
         </motion.div>
       </section>
@@ -423,7 +493,7 @@ export default function App() {
               className="text-xs text-primary uppercase tracking-widest mb-4"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
-              {activeTab === "register" ? "// tạo_tài_khoản" : "// chào_mừng_lại"}
+              {activeTab === "register" ? "Tạo tài khoản" : "Chào mừng lại"}
             </div>
             <h2
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}

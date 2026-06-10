@@ -14,8 +14,6 @@ services:
     startCommand: npm start # = node dist/index.js
     healthCheckPath: /api/health
     envVars:
-      - key: NODE_ENV
-        value: production
       # sync:false = KHÔNG lưu trong file này; bạn tự nhập giá trị bí mật trong Dashboard.
       - key: DATABASE_URL # chuỗi Neon prod CÓ -pooler (pooled), dùng lúc chạy
         sync: false

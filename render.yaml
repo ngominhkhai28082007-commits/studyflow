@@ -10,7 +10,7 @@ services:
     rootDir: server # mã backend nằm trong thư mục server/
     plan: free
     # Build chạy trên Linux của Render: cài deps, sinh Prisma Client cho Linux, biên dịch TS.
-    buildCommand: npm install && npx prisma generate && npm run build
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
     startCommand: npm start # = node dist/index.js
     healthCheckPath: /api/health
     envVars:

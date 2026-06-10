@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ArrowLeft, Send, Users } from "lucide-react";
 import { MascotIcon } from "./MascotIcon";
-import { DogAvatar } from "./DogAvatar";
 import { PomodoroTimer } from "./PomodoroTimer";
 import BorderGlow from "./BorderGlow";
 import { ScrollArea } from "./ui/scroll-area";
@@ -22,6 +21,7 @@ interface FocusRoomProps {
   onExit: (seconds: number) => void;
   mascotId: string;
   mascotLevel: number;
+  roomName?: string;
   roomMembers?: RoomMember[];
   roomMessages?: ChatMessage[];
   mySocketId?: string;
@@ -30,7 +30,7 @@ interface FocusRoomProps {
 }
 
 export function FocusRoom({
-  taskName, onExit, mascotId, mascotLevel,
+  taskName, onExit, mascotId, mascotLevel, roomName,
   roomMembers, roomMessages, mySocketId, onSendMessage, onRoomTick,
 }: FocusRoomProps) {
   const [sessionTime, setSessionTime] = useState(0);
@@ -74,11 +74,16 @@ export function FocusRoom({
             <ArrowLeft size={18} />
             <span className="text-sm font-semibold">Quay lại</span>
           </button>
-          <div
-            className="text-2xl font-black tabular-nums"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            {formatTime(sessionTime)}
+          <div className="text-center">
+            <div
+              className="text-2xl font-black tabular-nums"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              {formatTime(sessionTime)}
+            </div>
+            {roomName && (
+              <div className="text-xs text-muted-foreground mt-0.5 font-medium">{roomName}</div>
+            )}
           </div>
         </div>
       </nav>
@@ -143,11 +148,11 @@ export function FocusRoom({
                       >
                         <div className="p-6 flex flex-col items-center text-center">
                           <div className="mb-4">
-                            {isMe ? (
-                              <MascotIcon id={mascotId} level={mascotLevel} size={80} />
-                            ) : (
-                              <DogAvatar level={0} size={80} />
-                            )}
+                            <MascotIcon
+                              id={isMe ? mascotId : member.mascotId}
+                              level={isMe ? mascotLevel : member.mascotLevel}
+                              size={80}
+                            />
                           </div>
                           <div
                             className="font-bold text-sm mb-1"

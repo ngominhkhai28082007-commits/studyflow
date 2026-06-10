@@ -21,6 +21,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
 
   const [createOpen, setCreateOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<RoomSummary | null>(null);
+  const [currentRoomName, setCurrentRoomName] = useState("");
   const [createName, setCreateName] = useState("");
   const [createPassword, setCreatePassword] = useState("");
   const [createTaskId, setCreateTaskId] = useState(tasks[0]?.id ?? "");
@@ -31,6 +32,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
   const handleCreate = () => {
     if (!createName.trim() || createPassword.length < 4) return;
     setSelectedTaskId(createTaskId || tasks[0]?.id || null);
+    setCurrentRoomName(createName.trim());
     createRoom(createName.trim(), createPassword.trim(), userName, mascotId, mascotLevel);
     setCreateOpen(false);
     setCreateName("");
@@ -40,6 +42,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
   const handleJoin = () => {
     if (!joinTarget || !joinPassword.trim()) return;
     setSelectedTaskId(joinTaskId || tasks[0]?.id || null);
+    setCurrentRoomName(joinTarget.name);
     joinRoom(joinTarget.id, joinPassword.trim(), userName, mascotId, mascotLevel);
     setJoinTarget(null);
     setJoinPassword("");
@@ -64,6 +67,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
         onExit={handleExitRoom}
         mascotId={mascotId}
         mascotLevel={mascotLevel}
+        roomName={currentRoomName}
         roomMembers={state.members}
         roomMessages={state.messages}
         mySocketId={mySocketId ?? ""}

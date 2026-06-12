@@ -8,7 +8,14 @@
       "Bash(npx uipro-cli *)",
       "Bash(curl -s http://localhost:4000/api/auth/me)",
       "Bash(netstat -ano)",
-      "Bash(findstr :4000)"
+      "Bash(findstr :4000)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(npx vitest *)",
+      "Bash(npm install *)",
+      "Bash(Test-Path .env)",
+      "Bash(curl -s http://localhost:4000/api/health)"
     ]
   }
 }

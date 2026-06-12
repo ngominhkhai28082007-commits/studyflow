@@ -7,25 +7,12 @@ export interface PublicUser {
   createdAt: string;
 }
 
-const TOKEN_KEY = "focuszone_token";
-
-export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
-}
-export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
-}
-export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
 async function apiFetch(path: string, options: RequestInit = {}) {
-  const token = getToken();
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers ?? {}),
     },
   });
@@ -38,19 +25,21 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
 export async function register(input: { name: string; email: string; password: string }): Promise<PublicUser> {
   const data = await apiFetch("/api/auth/register", { method: "POST", body: JSON.stringify(input) });
-  setToken(data.token);
   return data.user as PublicUser;
 }
 
 export async function login(input: { email: string; password: string }): Promise<PublicUser> {
   const data = await apiFetch("/api/auth/login", { method: "POST", body: JSON.stringify(input) });
-  setToken(data.token);
   return data.user as PublicUser;
 }
 
 export async function fetchMe(): Promise<PublicUser> {
   const data = await apiFetch("/api/auth/me");
   return data.user as PublicUser;
+}
+
+export async function logout(): Promise<void> {
+  await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
 }
 
 export async function changePassword(input: {
@@ -61,10 +50,6 @@ export async function changePassword(input: {
     method: "POST",
     body: JSON.stringify(input),
   });
-}
-
-export function logout(): void {
-  clearToken();
 }
 
 export interface ApiTask {
@@ -131,6 +116,7 @@ export interface ShopState {
   coins: number;
   selectedMascot: string;
   level: number;
+  weeklyHours: number;
   mascots: ShopMascot[];
 }
 

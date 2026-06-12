@@ -13,7 +13,7 @@ const allowedOrigin = process.env.CLIENT_ORIGIN
   : /^http:\/\/localhost:\d+$/;
 
 export const io = new Server(httpServer, {
-  cors: { origin: allowedOrigin },
+  cors: { origin: allowedOrigin, credentials: true },
 });
 
 registerRoomHandlers(io);

@@ -1,5 +1,4 @@
 import { io, type Socket } from "socket.io-client";
-import { getToken } from "./api";
 
 const SOCKET_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:4000";
 
@@ -8,7 +7,7 @@ let _socket: Socket | null = null;
 export function getSocket(): Socket {
   if (!_socket) {
     _socket = io(SOCKET_URL, {
-      auth: { token: getToken() },
+      withCredentials: true,
       autoConnect: false,
     });
   }

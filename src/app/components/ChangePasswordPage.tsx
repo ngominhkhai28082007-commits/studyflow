@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { PageShell } from "./PageShell";
 import { changePassword } from "../lib/api";
 
@@ -10,37 +10,31 @@ export function ChangePasswordPage({ onBack }: { onBack: () => void }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    setError(null);
-    setSuccess(null);
-
-    // Kiểm tra phía client trước khi gọi server để báo lỗi nhanh.
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError("Vui lòng nhập đầy đủ 3 ô");
+      toast.error("Vui lòng nhập đầy đủ 3 ô");
       return;
     }
     if (newPassword.length < 8) {
-      setError("Mật khẩu mới tối thiểu 8 ký tự");
+      toast.error("Mật khẩu mới tối thiểu 8 ký tự");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("Mật khẩu nhập lại không khớp");
+      toast.error("Mật khẩu nhập lại không khớp");
       return;
     }
 
     setLoading(true);
     try {
       await changePassword({ currentPassword, newPassword });
-      setSuccess("Đã đổi mật khẩu thành công");
+      toast.success("Đã đổi mật khẩu thành công");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Không đổi được mật khẩu");
+      toast.error(err instanceof Error ? err.message : "Không đổi được mật khẩu");
     } finally {
       setLoading(false);
     }
@@ -49,19 +43,6 @@ export function ChangePasswordPage({ onBack }: { onBack: () => void }) {
   return (
     <PageShell title="Đổi mật khẩu" tag="đổi_mật_khẩu" onBack={onBack}>
       <div className="max-w-md">
-        {success && (
-          <div className="mb-5 flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-md px-4 py-3">
-            <CheckCircle2 size={16} className="shrink-0" />
-            <span>{success}</span>
-          </div>
-        )}
-        {error && (
-          <div className="mb-5 flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-4 py-3">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
         <div className="space-y-4">
           <div>
             <label className="block text-xs text-muted-foreground mb-1.5">Mật khẩu hiện tại</label>

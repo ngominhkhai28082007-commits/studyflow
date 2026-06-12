@@ -27,7 +27,13 @@ function leaveCurrentRoom(io: Server, socket: Socket): void {
 
 export function registerRoomHandlers(io: Server): void {
   io.use((socket, next) => {
-    const token = socket.handshake.auth.token as string | undefined;
+    const cookieHeader = socket.handshake.headers.cookie ?? "";
+    const cookieToken = cookieHeader
+      .split(";")
+      .find((c) => c.trim().startsWith("token="))
+      ?.split("=")[1]
+      ?.trim();
+    const token = cookieToken ?? (socket.handshake.auth.token as string | undefined);
     if (!token) return next(new Error("Unauthorized"));
     try {
       const payload = verifyToken(token);

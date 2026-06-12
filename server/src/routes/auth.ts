@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { hashPassword, verifyPassword } from "../lib/password";
 import { signToken } from "../lib/jwt";
@@ -6,6 +6,19 @@ import { registerSchema, loginSchema, changePasswordSchema } from "../validation
 import { requireAuth } from "../middleware/requireAuth";
 
 export const authRouter = Router();
+
+function setAuthCookie(res: Response, token: string) {
+  // Cross-origin (Vercel → Render) requires sameSite:"none" + secure:true.
+  // Detect production by CLIENT_ORIGIN being https, not NODE_ENV (which may be unset on Render).
+  const crossOrigin = (process.env.CLIENT_ORIGIN ?? "").startsWith("https://");
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: crossOrigin,
+    sameSite: crossOrigin ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+}
 
 function toPublicUser(user: { id: string; name: string; email: string; createdAt: Date }) {
   return { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt };
@@ -26,6 +39,7 @@ authRouter.post("/register", async (req, res) => {
   const hashed = await hashPassword(password);
   const user = await prisma.user.create({ data: { name, email, password: hashed } });
   const token = signToken({ userId: user.id });
+  setAuthCookie(res, token);
   return res.status(201).json({ token, user: toPublicUser(user) });
 });
 
@@ -47,7 +61,13 @@ authRouter.post("/login", async (req, res) => {
   }
 
   const token = signToken({ userId: user.id });
+  setAuthCookie(res, token);
   return res.json({ token, user: toPublicUser(user) });
+});
+
+authRouter.post("/logout", (_req, res) => {
+  res.clearCookie("token", { path: "/" });
+  res.json({ ok: true });
 });
 
 authRouter.get("/me", requireAuth, async (req, res) => {

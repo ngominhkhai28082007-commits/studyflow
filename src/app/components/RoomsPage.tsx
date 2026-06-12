@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { ArrowLeft, Users, Lock, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
@@ -16,8 +17,15 @@ interface RoomsPageProps {
 }
 
 export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: RoomsPageProps) {
-  const { state, mySocketId, createRoom, joinRoom, leaveRoom, sendMessage, tick, clearError } =
+  const { state, connectionStatus, mySocketId, createRoom, joinRoom, leaveRoom, sendMessage, tick, clearError } =
     useRoom();
+
+  useEffect(() => {
+    if (state.error) {
+      toast.error(state.error);
+      clearError();
+    }
+  }, [state.error]);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<RoomSummary | null>(null);
@@ -28,6 +36,14 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
   const [joinPassword, setJoinPassword] = useState("");
   const [joinTaskId, setJoinTaskId] = useState(tasks[0]?.id ?? "");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const roomOnline = connectionStatus === "connected";
+  const statusCopy = {
+    connecting: "Đang kết nối phòng học...",
+    connected: "",
+    reconnecting: "Mất kết nối tạm thời, đang thử vào lại phòng...",
+    disconnected: "Đã ngắt kết nối phòng học.",
+    error: "Không kết nối được phòng học. Vui lòng thử lại.",
+  }[connectionStatus];
 
   const handleCreate = () => {
     if (!createName.trim() || createPassword.length < 4) return;
@@ -73,6 +89,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
         mySocketId={mySocketId ?? ""}
         onSendMessage={sendMessage}
         onRoomTick={tick}
+        roomConnectionStatus={connectionStatus}
       />
     );
   }
@@ -102,12 +119,9 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-10">
-        {state.error && (
-          <div className="mb-6 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
-            {state.error}
-            <button onClick={clearError} className="ml-2 underline text-xs">
-              Đóng
-            </button>
+        {statusCopy && (
+          <div className="mb-6 p-3 rounded-lg bg-primary/10 border border-primary/25 text-primary text-sm">
+            {statusCopy}
           </div>
         )}
 
@@ -216,7 +230,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
             )}
             <Button
               onClick={handleCreate}
-              disabled={!createName.trim() || createPassword.length < 4}
+              disabled={!roomOnline || !createName.trim() || createPassword.length < 4}
             >
               Tạo phòng
             </Button>
@@ -257,8 +271,7 @@ export function RoomsPage({ userName, mascotId, mascotLevel, tasks, onBack }: Ro
                 </select>
               </div>
             )}
-            {state.error && <p className="text-destructive text-sm">{state.error}</p>}
-            <Button onClick={handleJoin} disabled={!joinPassword.trim()}>
+            <Button onClick={handleJoin} disabled={!roomOnline || !joinPassword.trim()}>
               Vào phòng
             </Button>
           </div>

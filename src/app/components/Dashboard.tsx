@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { Play, Plus, X, Flame, Coins, BarChart3, Trophy, Sparkles, ShoppingBag, KeyRound, LogOut, Users } from "lucide-react";
 import { FocusRoom } from "./FocusRoom";
 import { StatsPage } from "./StatsPage";
@@ -22,15 +24,14 @@ import {
 export type PanelKey = "stats" | "ranking" | "mascot" | "shop" | "password";
 
 export function Dashboard({ onLogout, userName }: { onLogout: () => void; userName: string }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<ApiTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRoom, setShowRoom] = useState(false);
-  const [showRooms, setShowRooms] = useState(false);
   const [currentTask, setCurrentTask] = useState<string | null>(null);
   const [newTaskName, setNewTaskName] = useState("");
-  const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
   const [shop, setShop] = useState<ShopState | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const todayVN = () => {
     const shifted = new Date(Date.now() + 7 * 60 * 60_000);
@@ -51,7 +52,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
 
   useEffect(() => {
     refreshTasks()
-      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được danh sách công việc"))
+      .catch((e) => toast.error(e instanceof Error ? e.message : "Không tải được danh sách công việc"))
       .finally(() => setLoading(false));
     refreshShop();
   }, []);
@@ -86,8 +87,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
         await recordSession(currentTask, seconds);
         await refreshTasks();
       } catch (e) {
-        // báo lỗi để người dùng biết phiên chưa được lưu (server vẫn là nguồn sự thật)
-        setError(e instanceof Error ? e.message : "Không lưu được phiên học vừa rồi");
+        toast.error(e instanceof Error ? e.message : "Không lưu được phiên học vừa rồi");
       }
     }
     setShowRoom(false);
@@ -97,50 +97,53 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
   const addTask = async () => {
     const name = newTaskName.trim();
     if (!name) return;
-    setError(null);
     try {
       const created = await apiCreateTask(name);
       setTasks((prev) => [...prev, created]);
-      setNewTaskName(""); // chỉ xoá ô nhập khi đã thêm thành công
+      setNewTaskName("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Không thêm được công việc");
+      toast.error(e instanceof Error ? e.message : "Không thêm được công việc");
     }
   };
 
   const removeTask = async (id: string) => {
     const prev = tasks;
-    setError(null);
-    setTasks((p) => p.filter((t) => t.id !== id)); // xoá lạc quan trên UI
+    setTasks((p) => p.filter((t) => t.id !== id));
     try {
       await apiDeleteTask(id);
     } catch (e) {
-      setTasks(prev); // lỗi -> khôi phục lại danh sách
-      setError(e instanceof Error ? e.message : "Không xóa được công việc");
+      setTasks(prev);
+      toast.error(e instanceof Error ? e.message : "Không xóa được công việc");
     }
+  };
+
+  const activePanel = location.pathname.replace(/^\/dashboard\/?/, "") as PanelKey | "rooms" | "";
+  const goDashboard = () => {
+    refreshShop();
+    navigate("/dashboard");
   };
 
   if (activePanel) {
     const back = () => {
-      setActivePanel(null);
-      refreshShop(); // pick up coin/mascot changes made in Shop/Mascot
+      goDashboard(); // pick up coin/mascot changes made in Shop/Mascot
     };
     if (activePanel === "stats") return <StatsPage onBack={back} />;
     if (activePanel === "ranking") return <RankingPage onBack={back} />;
     if (activePanel === "mascot") return <MascotPage onBack={back} onChanged={refreshShop} />;
     if (activePanel === "shop") return <ShopPage onBack={back} />;
     if (activePanel === "password") return <ChangePasswordPage onBack={back} />;
-  }
-
-  if (showRooms) {
-    return (
-      <RoomsPage
-        userName={userName}
-        mascotId={shop?.selectedMascot ?? "dog"}
-        mascotLevel={shop?.level ?? 0}
-        tasks={tasks}
-        onBack={() => setShowRooms(false)}
-      />
-    );
+    if (activePanel === "rooms") {
+      return (
+        <RoomsPage
+          userName={userName}
+          mascotId={shop?.selectedMascot ?? "dog"}
+          mascotLevel={shop?.level ?? 0}
+          tasks={tasks}
+          onBack={goDashboard}
+        />
+      );
+    }
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (showRoom && currentTask) {
@@ -168,7 +171,7 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               className="font-black text-xl tracking-tight"
             >
-              FocusZone
+              StudyFlow
             </span>
           </div>
 
@@ -192,30 +195,14 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-12 pb-36">
-        {error && (
-          <div className="mb-6 flex items-center justify-between gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-4 py-3">
-            <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300 shrink-0">
-              <X size={16} />
-            </button>
-          </div>
-        )}
-
         {/* Total Time Display */}
         <div className="text-center mb-12">
           <div
-            className="text-xs text-primary uppercase tracking-widest mb-3"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            tổng thời gian
-          </div>
-          <div
             className="text-6xl lg:text-7xl font-black tabular-nums tracking-tight"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontFeatureSettings: '"zero" 0' }}
           >
             {formatTime(totalTime)}
           </div>
-          <div className="text-muted-foreground text-sm mt-2">Hôm nay</div>
         </div>
 
         {/* Task List */}
@@ -299,32 +286,32 @@ export function Dashboard({ onLogout, userName }: { onLogout: () => void; userNa
           {
             icon: <BarChart3 size={16} />,
             label: "Thống kê",
-            onClick: () => setActivePanel("stats"),
+            onClick: () => navigate("/dashboard/stats"),
           },
           {
             icon: <Users size={16} />,
             label: "Phòng học",
-            onClick: () => setShowRooms(true),
+            onClick: () => navigate("/dashboard/rooms"),
           },
           {
             icon: <Trophy size={16} />,
             label: "Xếp hạng",
-            onClick: () => setActivePanel("ranking"),
+            onClick: () => navigate("/dashboard/ranking"),
           },
           {
             icon: <Sparkles size={16} />,
             label: "Studicon",
-            onClick: () => setActivePanel("mascot"),
+            onClick: () => navigate("/dashboard/mascot"),
           },
           {
             icon: <ShoppingBag size={16} />,
             label: "Cửa hàng",
-            onClick: () => setActivePanel("shop"),
+            onClick: () => navigate("/dashboard/shop"),
           },
           {
             icon: <KeyRound size={16} />,
             label: "Đổi mật khẩu",
-            onClick: () => setActivePanel("password"),
+            onClick: () => navigate("/dashboard/password"),
           },
           {
             icon: <LogOut size={16} />,

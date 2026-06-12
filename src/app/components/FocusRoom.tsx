@@ -4,7 +4,7 @@ import { MascotIcon } from "./MascotIcon";
 import { PomodoroTimer } from "./PomodoroTimer";
 import BorderGlow from "./BorderGlow";
 import { ScrollArea } from "./ui/scroll-area";
-import type { RoomMember, ChatMessage } from "../hooks/useRoom";
+import type { RoomMember, ChatMessage, ConnectionStatus } from "../hooks/useRoom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,17 +27,26 @@ interface FocusRoomProps {
   mySocketId?: string;
   onSendMessage?: (text: string) => void;
   onRoomTick?: () => void;
+  roomConnectionStatus?: ConnectionStatus;
 }
 
 export function FocusRoom({
   taskName, onExit, mascotId, mascotLevel, roomName,
-  roomMembers, roomMessages, mySocketId, onSendMessage, onRoomTick,
+  roomMembers, roomMessages, mySocketId, onSendMessage, onRoomTick, roomConnectionStatus = "connected",
 }: FocusRoomProps) {
   const [sessionTime, setSessionTime] = useState(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isLiveRoom = !!roomMembers;
+  const roomOnline = roomConnectionStatus === "connected";
+  const connectionCopy = {
+    connecting: "Đang kết nối phòng học...",
+    connected: "",
+    reconnecting: "Mất kết nối tạm thời, đang vào lại phòng...",
+    disconnected: "Đã ngắt kết nối phòng học.",
+    error: "Không kết nối được phòng học.",
+  }[roomConnectionStatus];
 
   const handleTick = useCallback(() => {
     setSessionTime((s) => s + 1);
@@ -87,6 +96,12 @@ export function FocusRoom({
           </div>
         </div>
       </nav>
+
+      {isLiveRoom && connectionCopy && (
+        <div className="border-b border-primary/20 bg-primary/10 px-4 py-2 text-center text-sm text-primary">
+          {connectionCopy}
+        </div>
+      )}
 
       <AlertDialog open={showExitConfirm} onOpenChange={setShowExitConfirm}>
         <AlertDialogContent>
@@ -234,7 +249,7 @@ export function FocusRoom({
               />
               <button
                 onClick={sendChat}
-                disabled={!chatInput.trim()}
+                disabled={!roomOnline || !chatInput.trim()}
                 className="p-2 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 disabled:opacity-30 transition-colors"
               >
                 <Send size={14} />

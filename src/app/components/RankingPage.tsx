@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { PageShell } from "./PageShell";
 import { MascotIcon } from "./MascotIcon";
 import { getLeaderboard, type ApiRankUser } from "../lib/api";
@@ -9,21 +10,13 @@ const rankEmoji = ["🥇", "🥈", "🥉"];
 
 export function RankingPage({ onBack }: { onBack: () => void }) {
   const [rows, setRows] = useState<ApiRankUser[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getLeaderboard()
       .then(setRows)
-      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được bảng xếp hạng"));
+      .catch((e) => toast.error(e instanceof Error ? e.message : "Không tải được bảng xếp hạng"));
   }, []);
 
-  if (error) {
-    return (
-      <PageShell title="Xếp hạng" tag="xếp_hạng" onBack={onBack}>
-        <div className="text-sm text-red-400">{error}</div>
-      </PageShell>
-    );
-  }
   if (!rows) {
     return (
       <PageShell title="Xếp hạng" tag="xếp_hạng" onBack={onBack}>
@@ -41,6 +34,11 @@ export function RankingPage({ onBack }: { onBack: () => void }) {
           Chưa có ai học trong tuần này. Hãy là người đầu tiên!
         </div>
       )}
+
+      <p className="text-xs text-muted-foreground text-center mb-6">
+        Xếp hạng theo tổng giờ học trong <strong>7 ngày gần nhất</strong>.
+        Nếu bằng giờ, tài khoản tạo trước xếp cao hơn.
+      </p>
 
       {me && (
         <div className="mb-6 p-5 rounded-xl bg-primary/10 border border-primary/30 flex items-center gap-4">

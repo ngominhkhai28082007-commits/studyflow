@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Coins, Check, X } from "lucide-react";
+import { toast } from "sonner";
+import { Coins, Check } from "lucide-react";
 import { PageShell } from "./PageShell";
 import { MascotIcon } from "./MascotIcon";
 import { getShop, buyMascot, type ShopState } from "../lib/api";
@@ -8,23 +9,21 @@ const mono = { fontFamily: "'JetBrains Mono', monospace" };
 
 export function ShopPage({ onBack }: { onBack: () => void }) {
   const [shop, setShop] = useState<ShopState | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [buyingId, setBuyingId] = useState<string | null>(null);
 
   useEffect(() => {
     getShop()
       .then(setShop)
-      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được cửa hàng"));
+      .catch((e) => toast.error(e instanceof Error ? e.message : "Không tải được cửa hàng"));
   }, []);
 
   const buy = async (id: string) => {
-    setError(null);
     setBuyingId(id);
     try {
       const next = await buyMascot(id);
       setShop(next);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Không mua được");
+      toast.error(e instanceof Error ? e.message : "Không mua được");
     } finally {
       setBuyingId(null);
     }
@@ -47,13 +46,6 @@ export function ShopPage({ onBack }: { onBack: () => void }) {
 
   return (
     <PageShell title="Cửa hàng" tag="cửa_hàng" onBack={onBack} right={coinBadge}>
-      {error && (
-        <div className="mb-6 flex items-center justify-between gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-4 py-3">
-          <span>{error}</span>
-          <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300 shrink-0"><X size={16} /></button>
-        </div>
-      )}
-
       <p className="text-sm text-muted-foreground mb-6">
         Học để kiếm xu (1 phút = 1 xu), rồi mở khoá linh vật mới. Đã mua là của bạn mãi mãi.
       </p>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
+import { toast } from "sonner";
 import { Clock, Flame, Target, CalendarDays } from "lucide-react";
 import { PageShell } from "./PageShell";
 import { getStats, type ApiStats } from "../lib/api";
@@ -20,21 +21,13 @@ function StatCard({ icon: Icon, value, label }: { icon: typeof Clock; value: str
 
 export function StatsPage({ onBack }: { onBack: () => void }) {
   const [stats, setStats] = useState<ApiStats | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getStats()
       .then(setStats)
-      .catch((e) => setError(e instanceof Error ? e.message : "Không tải được thống kê"));
+      .catch((e) => toast.error(e instanceof Error ? e.message : "Không tải được thống kê"));
   }, []);
 
-  if (error) {
-    return (
-      <PageShell title="Thống kê" tag="thống_kê" onBack={onBack}>
-        <div className="text-sm text-red-400">{error}</div>
-      </PageShell>
-    );
-  }
   if (!stats) {
     return (
       <PageShell title="Thống kê" tag="thống_kê" onBack={onBack}>

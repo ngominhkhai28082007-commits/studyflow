@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { authRouter } from "./routes/auth";
 import { tasksRouter } from "./routes/tasks";
@@ -22,7 +23,11 @@ export function createApp(options: CreateAppOptions = {}) {
   // dùng (nếu không, mọi người bị tính chung IP của proxy → rate-limit sai).
   app.set("trust proxy", 1);
 
-  app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? "http://localhost:5173" }));
+  app.use(cors({
+    origin: process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
+    credentials: true,
+  }));
+  app.use(cookieParser());
   app.use(express.json());
 
   app.get("/api/health", (_req, res) => {
